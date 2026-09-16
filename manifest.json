@@ -1,0 +1,9 @@
+{
+	"id": "code-converter",
+	"name": "Code Converter",
+	"version": "1.0.0",
+	"minAppVersion": "1.0.0",
+	"description": "Detects non-UTF-8 encodings of vault files, safely converts them to UTF-8 with backup, and protects against irreversible corruption.",
+	"author": "Snoopy",
+	"isDesktopOnly": false
+}

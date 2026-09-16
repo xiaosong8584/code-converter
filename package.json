@@ -1,0 +1,28 @@
+{
+	"name": "code-converter",
+	"version": "1.0.0",
+	"description": "Obsidian plugin that detects non-UTF-8 file encodings and safely converts them to UTF-8 with backup.",
+	"main": "main.js",
+	"types": "main.d.ts",
+	"scripts": {
+		"dev": "node scripts/build.mjs --watch",
+		"build": "node scripts/build.mjs",
+		"lint": "tsc --noEmit"
+	},
+	"keywords": [
+		"obsidian",
+		"plugin",
+		"encoding",
+		"utf8",
+		"convert"
+	],
+	"author": "Snoopy",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.11.0",
+		"builtin-modules": "^3.3.0",
+		"esbuild": "0.21.5",
+		"obsidian": "latest",
+		"typescript": "^5.5.4"
+	}
+}

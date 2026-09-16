@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+main.js
+main.js.map
+dist/
+*.tsbuildinfo
+
+# Obsidian
+.obsidian/
+trash/
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
