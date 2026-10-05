@@ -3,10 +3,11 @@
  * 这是"安全阀"的关键一环——绝不静默强转。
  */
 
-import { App, Modal, Notice, Setting, TextComponent, ToggleComponent } from "obsidian";
+import { App, Modal, Notice, Setting, ToggleComponent } from "obsidian";
 import { TFile, Vault } from "obsidian";
 import { detectEncoding, decodeWithEncoding } from "./encoding";
 import { CodeConverterSettings } from "./types";
+import { t, isRtl } from "./i18n";
 
 /** 在弹窗内构造的轻量文件引用（避免和 Vault TFile 混淆） */
 export class EncodingConfirmModal extends Modal {
@@ -36,30 +37,36 @@ export class EncodingConfirmModal extends Modal {
 	async onOpen(): Promise<void> {
 		const { contentEl } = this;
 		contentEl.empty();
+		// RTL 语言翻转内容方向
+		if (isRtl()) contentEl.setAttribute("dir", "rtl");
+		else contentEl.removeAttribute("dir");
 
-		const bytes: Uint8Array = await this.vault.readBinary(this.file);
+		const bytes: Uint8Array = new Uint8Array(await this.vault.readBinary(this.file));
 		const det = detectEncoding(bytes, this.settings.confidenceThreshold);
 
-		const h = contentEl.createEl("h2", { text: "检测到非 UTF-8 编码" });
+		const h = contentEl.createEl("h2", { text: t("modal.title") });
 		h.classList.add("cc-title");
 
 		// 文件信息
 		const fileRow = contentEl.createEl("div", { cls: "cc-file-row" });
 		fileRow.setText(this.file.path);
 
-		// 探测编码
+		// 探测编码（textContent 而非 innerHTML，杜绝插值内容被当 HTML 解析）
 		const encRow = contentEl.createEl("div", { cls: "cc-detected" });
-		encRow.innerHTML = `探测编码：<b>${det.encoding}</b>（置信度 ${det.confidence}%）`;
+		encRow.textContent = t("modal.detected", {
+			enc: det.encoding,
+			n: det.confidence
+		});
 
 		// 预览解码后的前 400 字符（帮助用户判断编码是否正确）
 		const preview = decodeWithEncoding(bytes, det.encoding).slice(0, 400);
 		const preEl = contentEl.createEl("pre", { cls: "cc-preview" });
-		preEl.setText(preview || "（空文件）");
+		preEl.setText(preview || t("notice.emptyFile"));
 
 		// 强制转换开关
 		new Setting(contentEl)
-			.setName("强制转换")
-			.setDesc("忽略低置信度保护直接转换。仅在你确认编码正确时使用。")
+			.setName(t("modal.force.name"))
+			.setDesc(t("modal.force.desc"))
 			.addToggle((tg: ToggleComponent) =>
 				tg.setValue(this.force).onChange((v) => {
 					this.force = v;
@@ -68,13 +75,19 @@ export class EncodingConfirmModal extends Modal {
 
 		// 按钮行
 		const btnRow = contentEl.createDiv({ cls: "cc-btn-row" });
-		const okBtn = btnRow.createEl("button", { text: "确认转换" });
+		const okBtn = btnRow.createEl("button", { text: t("modal.confirm") });
 		okBtn.className = "cc-primary";
 		okBtn.onclick = async () => {
-			await this.onConfirm(this.force);
-			this.close();
+			try {
+				await this.onConfirm(this.force);
+			} catch (e) {
+				// 转换失败也要关闭弹窗并提示，避免弹窗卡死
+				new Notice(`[Code Converter] ${(e as Error).message}`, 8000);
+			} finally {
+				this.close();
+			}
 		};
-		const cancelBtn = btnRow.createEl("button", { text: "取消" });
+		const cancelBtn = btnRow.createEl("button", { text: t("modal.cancel") });
 		cancelBtn.onclick = () => {
 			this.close();
 		};

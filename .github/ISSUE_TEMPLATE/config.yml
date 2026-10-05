@@ -1,0 +1,16 @@
+# 关闭"空白 issue"入口，只允许用模板创建（避免无信息量的报障）
+blank_issues_enabled: false
+
+# 无法归类时的去向
+contact_links:
+  - name: 使用文档 / 开发文档
+    url: https://github.com/xiaosong8584/code-converter/tree/main/docs
+    about: 不确定是 bug 还是不会用？先查项目文档目录
+
+  - name: 向 Obsidian 社区市场提交本插件
+    url: https://github.com/obsidianmd/obsidian-releases/issues
+    about: 这是市场提交流程，不是给本插件的 issue
+
+  - name: 讨论 / 提问（ Discussions ）
+    url: https://github.com/xiaosong8584/code-converter/discussions
+    about: 一般性问答、使用心得、求助

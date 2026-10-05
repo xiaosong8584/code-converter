@@ -1,123 +1,96 @@
 # Code Converter
 
-> Obsidian 插件：自动识别仓库中非 UTF-8 编码的文件，并在**安全保护**前提下转换为 UTF-8。
+![CI](https://github.com/xiaosong8584/code-converter/actions/workflows/ci.yml/badge.svg)
 
-Obsidian 内部把所有笔记按 UTF-8 读取。一旦仓库里混入 GBK / Big5 / Shift-JIS / UTF-16 等旧编码文件，打开就会乱码。本插件提供**探测 → 备份 → 转换 → 去 BOM** 的完整闭环，并内置多重"安全阀"，避免误判造成不可逆损坏。
+![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
----
+![version](https://img.shields.io/badge/version-1.7.0-green.svg)
 
-## 核心特性
+> An Obsidian plugin that detects non-UTF-8 files in your vault and converts them to UTF-8 with safety protection, plus an experimental mojibake repair command for double-encoded text already baked into valid UTF-8 content.
 
-- ✅ **严格 UTF-8 校验**：合法 UTF-8 文件（含纯 ASCII）直接放行，零风险。
-- ✅ **BOM 强信号识别**：UTF-8 / UTF-16 LE / UTF-16 BE / UTF-32 的 BOM 直接信任。
-- ✅ **候选编码评分探测**：对无 BOM 的非 UTF-8 文件，在 GBK / Big5 / Shift-JIS / EUC-JP / CP932 / ISO-8859-1 间做"解码质量评分"，取置信度最高者。
-- ✅ **置信度保护**：低于阈值（默认 80%）的文件绝不静默强转，弹出确认框由人工决策。
-- ✅ **转换前自动备份**：原文件字节存入备份目录，可随时回滚。
-- ✅ **去 UTF-8 BOM**：转换后按需去掉 BOM，更干净。
-- ✅ **导入自动检测**（默认关闭）：新建/导入文件时自动转，带防回环保护。
-- ✅ **三个命令**：转换当前文件 / 扫描转换当前文件夹 / 仅检测（不改动）。
+Chinese version: [README.zh-CN.md](README.zh-CN.md)
+
+Obsidian reads every note as UTF-8. Once a vault contains legacy-encoded files (GBK, Big5, Shift-JIS, UTF-16, ...), they open as garbage. This plugin provides the full **detect → backup → convert → strip BOM** loop with multiple safety valves so a false positive can never corrupt your notes irreversibly.
 
 ---
 
-## 安装
+## Features
 
-### 方式一：本地开发安装（推荐）
+- **Strict UTF-8 validation** — valid UTF-8 files, including pure ASCII, are left untouched. Zero risk.
+- **BOM detection** — UTF-8, UTF-16 LE/BE, and UTF-32 byte order marks are trusted directly.
+- **Scored encoding detection** — decodes are scored across 22 candidate encodings covering 10 script families.
+- **Confidence protection** — anything below the threshold (80% by default) is never converted silently; you confirm each file.
+- **Automatic backup before conversion** — roll back at any time.
+- **Mojibake repair (experimental)** — fixes double-encoded text such as `ÖÐÎÄ` or `涓枃` using a triple quality gate, line-by-line repair, and a before/after preview.
+- **U+FFFD damage detection** — counts replacement characters and tells you plainly that the bytes are gone and cannot be recovered automatically. It never invents content.
+- **10 UI languages with RTL** — Simplified Chinese, English, Japanese, Korean, Russian, French, German, Spanish, Portuguese, Arabic. The first 4 are free; the last 6 require VIP.
+- **Conversion log export** — JSON or Markdown.
+- **VIP (optional)** — offline Ed25519 activation codes (universal or device-bound) unlock folder batch conversion, the last 6 interface languages, and editing the file extension whitelist; they also hide the supporter banner.
+- **Privacy** — no network requests and no telemetry at all.
 
-1. 构建：
-   ```bash
-   cd CodeConverter
-   npm install
-   npm run build      # 生成 main.js
-   ```
-2. 把插件目录复制到你的 Vault：
-   ```
-   你的Vault/.obsidian/plugins/code-converter/
-   ├── main.js
-   ├── manifest.json
-   └── versions.json
-   ```
-3. 在 Obsidian 中开启：`设置 → 第三方插件 → 开发者模式` 打开，然后启用 `Code Converter`。
+---
 
-### 方式二：热重载开发
+## Install
+
+1. Open **Settings → Community plugins → Browse** and install **Code Converter**.
+2. Enable the plugin.
+
+Alternatively, download the `main.js`, `manifest.json`, and `versions.json` attachments from a GitHub release, or build from source:
 
 ```bash
-npm run dev   # 以 watch 模式构建，改 src 自动重打包到 main.js
+git clone https://github.com/xiaosong8584/code-converter.git
+cd code-converter
+npm install
+npm run build      # produces main.js
 ```
+
+Then copy the folder (or symlink it) into `your-vault/.obsidian/plugins/code-converter/` and enable it. Full instructions and troubleshooting: **[User guide](USER_GUIDE.md)** (currently Chinese only).
 
 ---
 
-## 使用
+## Commands
 
-### 命令面板
+Open the command palette (`Ctrl/Cmd + P`) and pick one of:
 
-`Ctrl/Cmd + P` 打开命令面板，输入以下任一：
+| Command | What it does |
+| --- | --- |
+| Convert current file to UTF-8 | Converts high-confidence files directly; asks for confirmation below the threshold |
+| Scan and convert current folder (non-UTF-8 → UTF-8) **(VIP)** | VIP feature — converts every non-UTF-8 file in the current folder whose extension is in the whitelist (default `md;h;hpp;cpp;c;cc;py;txt`) |
+| Detect encoding of current file (report only) | Reports encoding, BOM, confidence, and a preview without touching the file |
+| Repair mojibake in current file (double-encoded repair, experimental) | Shows a before/after preview of the repair before writing anything |
+| Export conversion log (JSON) / (Markdown) | Exports the conversion record in either format |
 
-| 命令 | 说明 |
-|------|------|
-| `Code Converter: 把当前文件转换为 UTF-8` | 探测当前文件；非 UTF-8 且高置信度直接转，低置信度弹确认框 |
-| `Code Converter: 扫描并转换当前文件夹` | 把当前文件所在目录下的全部 .md 非 UTF-8 文件转掉 |
-| `Code Converter: 检测当前文件编码` | 只报告编码 / BOM / 置信度 / 预览，不改动文件 |
-
-### 设置项
-
-`设置 → Code Converter`：
-
-- **导入时自动转换为 UTF-8**：新建/导入时静默转（默认关）。
-- **置信度阈值（%）**：低于此值需人工确认，默认 80。
-- **转换前自动备份**：默认开，强烈建议保持。
-- **备份目录**：默认 `.code-converter-backups`。
-- **转换时去除 UTF-8 BOM**：默认开。
+Key settings under **Settings → Code Converter**: auto-convert on import (on by default, permanently free — this is the plugin's core safety net against Obsidian silently saving a GBK file back as UTF-8 mojibake), file extension whitelist (default `md;h;hpp;cpp;c;cc;py;txt`, editing requires VIP), confidence threshold, auto backup and backup directory, strip UTF-8 BOM, write UTF-8 BOM, log file, damage warning threshold, interface language (last 6 are VIP), and VIP status.
 
 ---
 
-## 安全机制（为什么不会毁文件）
+## VIP
 
-1. **合法 UTF-8 绝不触碰**：`TextDecoder('utf-8', {fatal:true})` 通过即视为已安全。
-2. **置信度门槛**：候选编码评分低于阈值 → 标记 `needsManualConfirm`，自动模式只报告不转换；手动模式弹框由你勾选"强制转换"才动手。
-3. **先备份再改**：每次转换前把原始字节写进备份目录（带时间戳，不覆盖）。
-4. **防事件回环**：插件自己写文件会触发 `modify`，用 `selfWritten` 时间戳标志位跳过自触发，避免死循环。
-5. **短文件谨慎**：字节数过少时评分不稳，自动模式倾向只报告。
+The core features are **free forever**: single-file conversion, encoding detection, mojibake repair, conversion log export, backups and rollback, and the first 4 interface languages.
 
----
+Three features require a VIP activation code:
 
-## 架构
-
-```
-src/
-├── main.ts            插件入口：命令注册 / 设置面板 / 事件监听 / 防回环
-├── settings.ts        设置面板 UI
-├── confirm-modal.ts   低置信度确认弹窗（安全阀）
-├── encoding.ts        编码探测核心：BOM / UTF-8 校验 / 候选评分
-├── convert.ts         转换编排：探测→备份→解码→去BOM→写回
-├── backup.ts          备份模块
-├── types.ts           类型与默认设置
-└── build/
-    └── build.mjs      esbuild 打包脚本（外部化 obsidian / node 内置）
-```
-
-数据流：
-
-```
-readBinary(原始字节)
-   └─► detectEncoding
-        ├─ BOM?  ──► 信任
-        ├─ 严格UTF-8? ──► 放行
-        └─ 非UTF-8 ──► 候选编码评分 ──► 置信度
-                              ├─ 高 ──► 备份 ──► 解码 ──► 去BOM ──► vault.write
-                              └─ 低 ──► 弹确认框 ──► (用户强制) ──► 同上
-```
+1. **Scan and convert current folder** (batch conversion) — marked **(VIP)** in the command palette; without VIP it only prompts and opens the activation dialog.
+2. **The last 6 interface languages** (Russian, French, German, Spanish, Portuguese, Arabic) — marked **(VIP)** and disabled in the settings dropdown.
+3. **Editing the file extension whitelist** — folder batch conversion is a VIP feature, so without VIP the field is disabled and always holds the default list. Note: auto-convert on import is *not* a VIP feature (see above) and works with the default whitelist for everyone.
+VIP codes are offline Ed25519-signed codes. They are obtained by supporting the author through GitHub Sponsors or 爱发电 (afdian.net) — pricing is shown on those pages. There is no account, no subscription and no online check; the activation state is stored locally in `data.json`.
 
 ---
 
-## 回滚
+## Documentation
 
-转换前生成的备份位于 `备份目录/<文件名>.<时间戳>.bak`。若转换后发现内容不对，把该 `.bak` 复制回原路径即可还原。
+- **Users**: [USER_GUIDE.md](USER_GUIDE.md) — installation, commands, settings, real-world cases, capability boundaries, rollback, and VIP.
+- **Developers and maintainers**: development documentation lives in the `docs` directory (architecture, encoding pool, i18n/RTL, logging, the repair algorithm, building and versioning), along with the changelog and the contribution guide.
 
-## 限制
+---
 
-- 编码识别本质是概率性的：短文件（< 200 字节）或纯数字文件易误判——务必保持"转换前备份"开启。
-- 浏览器 `TextDecoder` 对 `gbk` 等编码的支持取决于运行时的 Intl-ICU；Obsidian 桌面版（Electron）通常完整支持。
+## Disclosure
+
+- **No network use. No telemetry. No data collection.** The plugin runs fully offline.
+- **Static supporter banner inside the plugin's own interface.** Without an active VIP, the plugin may show a static banner supporting the author once per day after startup. It can be dismissed and will not reappear that day. It never loads remote content.
+- **Payment required for some features.** Folder batch conversion, the last 6 interface languages, and editing the file extension whitelist require a VIP activation code (see [VIP](#vip)). Single-file conversion, encoding detection, mojibake repair, log export, and backups are free forever. No account or subscription is involved.
+- **No file access outside the vault.**
 
 ## License
 
-MIT
+MIT (see [`LICENSE`](LICENSE))

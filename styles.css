@@ -1,0 +1,114 @@
+/* Code Converter — 插件样式表（对应 sample-plugin 的 styles.css） */
+/* 与 src/main.ts 中原本的 const CSS 常量同源；本文件由 release.mjs 打包进 dist/，
+   Obsidian 加载插件时会自动 applyStylesheet 加载它。 */
+
+.cc-backup-dir { max-width: 260px; }
+
+.cc-preview {
+	max-height: 200px;
+	overflow: auto;
+	background: var(--background-secondary);
+	border-radius: 6px;
+	padding: 8px;
+	font-family: var(--font-monospace);
+	font-size: 12px;
+	white-space: pre-wrap;
+}
+
+.cc-btn-row { display: flex; gap: 8px; margin-top: 12px; }
+.cc-btn-row button {
+	padding: 4px 14px;
+	cursor: pointer;
+	border-radius: 6px;
+}
+.cc-btn-row .cc-primary {
+	background: var(--interactive-accent);
+	color: var(--text-normal);
+	border: none;
+}
+
+/* RTL：文字/间距/箭头随方向翻转 */
+[dir="rtl"] .cc-file-row,
+[dir="rtl"] .cc-detected,
+[dir="rtl"] .cc-preview {
+	direction: rtl;
+	text-align: right;
+}
+
+/* 风险确认弹窗：正文逐条列出，无备份时单独高亮 */
+.cc-risk-line {
+	margin: 6px 0;
+	line-height: 1.5;
+}
+.cc-risk-warn {
+	margin-top: 12px;
+	font-weight: 600;
+	color: var(--text-error, var(--text-accent));
+}
+.cc-title {
+	margin-top: 0;
+}
+[dir="rtl"] .cc-btn-row {
+	flex-direction: row-reverse;
+}
+[dir="rtl"] .setting-item .setting-item-name,
+[dir="rtl"] .setting-item .setting-item-description {
+	text-align: right;
+}
+
+/* 广告横幅（支持作者条）：底部固定，透明过渡显隐 */
+.cc-ad-banner {
+	position: fixed;
+	bottom: 12px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 9999;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 10px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	font-size: 13px;
+	color: var(--text-normal);
+	max-width: min(92vw, 640px);
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.cc-ad-banner--hidden {
+	opacity: 0;
+	visibility: hidden;
+}
+.cc-ad-banner__text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.cc-ad-banner__open,
+.cc-ad-banner__channel {
+	border: none;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: 6px;
+	padding: 2px 10px;
+	cursor: pointer;
+	font-size: 12px;
+	white-space: nowrap;
+}
+.cc-ad-banner__channel {
+	background: transparent;
+	color: var(--text-normal);
+	border: 1px solid var(--background-modifier-border);
+}
+.cc-ad-banner__close {
+	border: none;
+	background: transparent;
+	color: var(--text-muted);
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 1;
+	padding: 0 2px;
+}

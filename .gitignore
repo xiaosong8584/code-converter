@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+package-lock.json
 
 # Build output
 main.js
@@ -10,6 +11,17 @@ dist/
 # Obsidian
 .obsidian/
 trash/
+data.json
+
+# Build test artifacts
+test/_encoding.cjs
+test/_encoding.test.cjs
+test/_run.cjs
+test/_mojibake-gen.cjs
+test/_mojibake-run.cjs
+
+# VIP signing key（绝不进 git）
+.vip-secret
 
 # Logs
 *.log
@@ -19,3 +31,6 @@ trash/
 Thumbs.db
 .vscode/
 .idea/
+test/_log-run.cjs
+test/_vip-run.cjs
+test/_vip-run.mjs

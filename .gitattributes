@@ -1,0 +1,8 @@
+# 测试夹具保持 LF 行尾：Windows 上 core.autocrlf=true 会把 .txt 转 CRLF，
+# 导致 mojibake 用例「修复后 vs 真实原文」逐字符比对在重新 checkout 后失败。
+test/mojibake-cases/** text eol=lf
+test/MOJIBAKE_REPORT.md text eol=lf
+
+# P14 CRLF 用例必须保留原始 CRLF 字节（-text 禁用归一化），否则用例失效
+test/mojibake-cases/P14-crlf.before.txt -text
+test/mojibake-cases/P14-crlf.after.txt -text

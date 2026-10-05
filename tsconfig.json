@@ -19,6 +19,7 @@
 		"noImplicitReturns": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
+		"noEmit": true,
 		"sourceMap": true,
 		"strict": true,
 		"target": "ES2018"
