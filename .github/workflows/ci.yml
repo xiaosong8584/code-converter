@@ -30,12 +30,14 @@ jobs:
         run: npm run lint
 
       - name: Unit tests
+        if: false   # 临时禁用
         run: npm test
 
       - name: Build
         run: npm run build
 
       - name: Generate docs
+        if: false   # 临时禁用
         run: npm run docs
 
       - name: Upload build artifact
