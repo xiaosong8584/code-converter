@@ -1,0 +1,121 @@
+name: 🐛 Bug Report
+about: Report a problem with Code Converter
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈问题！提交前请先确认：
+        - 已搜索过现有 issue，避免重复报告
+        - 已尝试在**桌面版（Electron）**重现（移动端 TextDecoder 编码支持不完整，建议桌面端复现）
+        - 问题与**编码识别/转换/备份/日志**功能相关；若是 UI 小瑕疵请改发 feature request
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 用一两句话说清 bug 是什么
+      placeholder: 例如：转换 GBK 文件后中文变成 Latin-1 乱码
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 一步步列出复现方法（越精确越好）
+      placeholder: |
+        1. 新建一个 GBK 编码的 .md 文件，内容为「中文测试」
+        2. 用命令面板运行「Code Converter: 把当前文件转换为 UTF-8」
+        3. 转换后打开文件 → 出现乱码
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+      description: 你期望的正确表现是什么
+      placeholder: 转换后应为正常中文，无乱码
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 实际看到了什么（可贴截图/日志）
+      placeholder: 转换后出现 Ã¤Â¼Â¾ 之类乱码
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      description: 可在 设置 → Code Converter 页面查看
+      placeholder: 1.2.0
+    validations:
+      required: true
+
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian 版本
+      description: 关于页面或 设置 → 关于 可查看
+      placeholder: 1.x.x
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 运行端
+      description: 编码探测在桌面端（Electron）最完整
+      options:
+        - 桌面版 (Electron)
+        - 移动版
+        - 浏览器版
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统
+      placeholder: Windows 11 / macOS 14 / Ubuntu 22.04
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 转换日志（可选）
+      description: 在设置里启用「日志文件」后，把 .code-converter.log 的对应行贴出来；或运行「导出转换日志」后贴 JSON
+      placeholder: |
+        {
+          "file": "notes/test.md",
+          "fromEncoding": "gbk",
+          "confidence": 100,
+          ...
+        }
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充信息（可选）
+      description: 相关截图、复现用的最小样例文件、相关 issue 链接等
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 我已确认
+      options:
+        - label: 我已确认是 bug 而非预期行为（安全阀：低置信度会弹确认框、不会静默强转）
+          required: true
+        - label: 我已尝试转换前的备份回滚（`.code-converter-backups/`）
+          required: false
+        - label: 我已搜索过现有 issue，这不是重复报告
+          required: true

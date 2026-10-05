@@ -1,0 +1,38 @@
+{
+ "name": "code-converter",
+ "version": "1.7.0",
+ "description": "Obsidian plugin that detects non-UTF-8 file encodings and safely converts them to UTF-8 with backup.",
+ "main": "main.js",
+ "types": "main.d.ts",
+ "scripts": {
+  "dev": "node scripts/build.mjs --watch",
+  "build": "node scripts/build.mjs",
+  "build:release": "node scripts/build.mjs --release",
+  "release": "node scripts/release.mjs",
+  "lint": "tsc --noEmit",
+  "docs": "node scripts/gen-doc.mjs",
+  "test": "esbuild test/encoding.test.mjs --bundle --format=cjs --platform=node --outfile=test/_run.cjs --external:obsidian --external:electron && node test/_run.cjs && npm run test:log && npm run test:vip && npm run typecheck",
+  "locales": "node scripts/check-locales.mjs",
+  "gen:tables": "python scripts/gen-encode-tables.py",
+  "test:log": "esbuild test/_log-smoke.mjs --bundle --format=cjs --outfile=test/_log-run.cjs --alias:obsidian=./test/_obsidian-stub.mjs && node test/_log-run.cjs",
+  "test:vip": "esbuild test/vip-ad.test.mjs --bundle --format=esm --platform=node --outfile=test/_vip-run.mjs && node test/_vip-run.mjs",
+  "test:mojibake": "esbuild test/mojibake-gen.mjs --bundle --format=cjs --platform=node --outfile=test/_mojibake-gen.cjs && node test/_mojibake-gen.cjs && esbuild test/mojibake-suite.mjs --bundle --format=cjs --platform=node --outfile=test/_mojibake-run.cjs && node test/_mojibake-run.cjs",
+  "typecheck": "tsc -p tsconfig.json"
+ },
+ "keywords": [
+  "obsidian",
+  "plugin",
+  "encoding",
+  "utf8",
+  "convert"
+ ],
+ "author": "xiaosong8584",
+ "license": "MIT",
+ "devDependencies": {
+  "@types/node": "^20.11.0",
+  "builtin-modules": "^3.3.0",
+  "esbuild": "^0.28.2",
+  "obsidian": "latest",
+  "typescript": "^5.5.4"
+ }
+}

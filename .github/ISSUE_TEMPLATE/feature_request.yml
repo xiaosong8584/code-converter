@@ -1,0 +1,78 @@
+name: 💡 Feature Request
+about: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["feature"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎提议功能！提交前请先：
+        - 搜索现有 issue / 讨论，避免重复
+        - 如果是**语言相关**，请先看 `docs/I18N.md`（已有 10 国语言）
+        - 如果是**编码相关**，请先看 `docs/ENCODINGS.md`（已有 22 候选编码）
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决的问题
+      description: 为什么需要这个功能？它解决什么场景的痛点？
+      placeholder: 例如：我想批量转换 .txt 文件，但当前只支持 .md
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 期望的实现
+      description: 你期望功能怎么工作？给个具体例子最好
+      placeholder: 例如：扫描命令里加个「包含 .txt」开关
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 已考虑的替代方案
+      description: 你试过别的办法吗？为什么不行？
+      placeholder: 例如：手动用 Notepad++ 转，但仓库有几百个文件
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及领域
+      description: 方便维护者归类
+      options:
+        - 编码识别 / 候选编码池
+        - 转换 / 备份 / 安全阀
+        - 界面 i18n / RTL
+        - 转换日志 / 导出
+        - 命令 / 设置项
+        - 性能 / 大文件
+        - 其他
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 补充背景（可选）
+      description: 相关使用场景、参考插件/工具、期望的优先级等
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 我已确认
+      options:
+        - label: 我搜索过现有 issue，这不是重复提议
+          required: true
+        - label: 我理解编码识别是概率性的，不会保证 100% 准确
+          required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 参与意愿
+      options:
+        - label: 我乐意提交 PR 实现它（参考 `docs/CONTRIBUTING.md`）
+          required: false
+        - label: 我愿意为这个功能赞助（见仓库右上角 Sponsor）
+          required: false

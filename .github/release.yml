@@ -1,0 +1,43 @@
+# 自动生成发行说明配置（GitHub Releases "Generate release notes" 使用）
+# 与 .github/workflows/ci.yml 里 softprops/action-gh-release 的 generate_release_notes 配套。
+# 按 PR/commit 的 label 归类到下列分类。新增 label 后需同步 .github/ISSUE_TEMPLATE 的 label 提示。
+changelog:
+  categories:
+    - title: 🚀 Features
+      labels:
+        - feature
+        - enhancement
+    - title: 🐛 Bug Fixes
+      labels:
+        - fix
+        - bug
+        - regression
+    - title: 🌐 i18n & Localization
+      labels:
+        - i18n
+        - locale
+        - rtl
+    - title: 📚 Documentation
+      labels:
+        - docs
+        - documentation
+    - title: 🧪 Tests & CI
+      labels:
+        - test
+        - ci
+    - title: 🔧 Maintenance
+      labels:
+        - chore
+        - dependencies
+        - refactoring
+    - title: ⚡ Breaking Changes
+      labels:
+        - breaking-change
+    - title: Other Changes
+      labels:
+        - "*"
+  exclude:
+    labels:
+      - ignore-for-release
+      - skip-changelog
+      - draft

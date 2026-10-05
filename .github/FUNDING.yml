@@ -1,0 +1,8 @@
+# GitHub Sponsors + 自定义资助渠道
+# 说明：GitHub Sponsors 会自动显示为仓库页右上角"Sponsor"按钮。
+# custom 渠道填 URL 后会在仓库页显示为链接（无内置图标）。
+github:
+  - xiaosong8584
+custom:
+  - "https://afdian.net/a/xiaosong8584"               # 爱发电（如需请替换为你的爱发电主页）
+  - "https://github.com/xiaosong8584/code-converter"  # 仓库主页（可替换为微信/支付宝收款码或赞助说明页）
