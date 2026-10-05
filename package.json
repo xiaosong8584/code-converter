@@ -32,7 +32,10 @@
   "@types/node": "^20.11.0",
   "builtin-modules": "^3.3.0",
   "esbuild": "^0.28.2",
-  "obsidian": "latest",
+  "obsidian": "^1.13.1",
   "typescript": "^5.5.4"
+ },
+ "overrides": {
+  "moment": "^2.31.0"
  }
 }
