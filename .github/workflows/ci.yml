@@ -33,8 +33,13 @@ jobs:
         if: false   # 临时禁用
         run: npm test
 
-      - name: Build
-        run: npm run build
+      # 必须用 release 模式，不能用 `npm run build`：
+      #   开发模式 → 仓库根 main.js（不压缩 + 内联 sourcemap，会把全部 TS 源码随包发出）
+      #   发布模式 → dist/main.js（压缩、无 sourcemap）
+      # 发布包契约见 scripts/release.mjs：dist/ 恰好三件套 main.js / manifest.json / styles.css；
+      # versions.json 不打包（只留仓库根供社区目录读取，见 release.mjs:11）。
+      - name: Build & package (production)
+        run: npm run release
 
       - name: Generate docs
         if: false   # 临时禁用
@@ -46,9 +51,9 @@ jobs:
         with:
           name: code-converter-release
           path: |
-            main.js
-            manifest.json
-            versions.json
+            dist/main.js
+            dist/manifest.json
+            dist/styles.css
 
   release:
     name: GitHub Release (on tag)
@@ -80,11 +85,30 @@ jobs:
           fi
           echo "tag '$TAG' == manifest version '$VER'"
 
+      # 发布资产必须与 scripts/release.mjs 的契约完全一致：恰好三件套。
+      # 少 styles.css → 插件装上后没有样式；多 versions.json → 污染社区目录。
+      # 这道闸门让「资产清单漂移」在发版时硬失败，而不是静默发出去。
+      - name: Verify release assets complete
+        run: |
+          set -e
+          for f in main.js manifest.json styles.css; do
+            if [ ! -s "dist/$f" ]; then
+              echo "::error::release asset 'dist/$f' is missing or empty"
+              exit 1
+            fi
+          done
+          extra="$(ls dist | grep -vxE 'main\.js|manifest\.json|styles\.css' || true)"
+          if [ -n "$extra" ]; then
+            echo "::error::unexpected files would be published: $extra"
+            exit 1
+          fi
+          ls -l dist
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/main.js
             dist/manifest.json
-            dist/versions.json
+            dist/styles.css
           generate_release_notes: true
