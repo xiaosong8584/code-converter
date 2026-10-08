@@ -221,7 +221,7 @@ export default class CodeConverter extends Plugin {
 		this.register(() => window.clearTimeout(adTimer));
 	}
 
-	async onunload(): Promise<void> {
+	onunload(): void {
 		this.adBanner?.dispose();
 		this.adBanner = null;
 	}

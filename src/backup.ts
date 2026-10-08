@@ -22,9 +22,9 @@ export async function backupFile(
 	relPath: string
 ): Promise<string> {
 	const file = vault.getAbstractFileByPath(relPath);
-	if (!file) throw new Error(`file not found: ${relPath}`);
+	if (!(file instanceof TFile)) throw new Error(`file not found: ${relPath}`);
 
-	const bytes = await vault.readBinary(file as unknown as TFile);
+	const bytes = await vault.readBinary(file);
 	const time = new Date().toISOString().replace(/[:.]/g, "-");
 	const target = `${backupDir}/${safeName(relPath)}.${time}.bak`;
 

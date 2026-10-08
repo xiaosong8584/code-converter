@@ -13,13 +13,13 @@ import type { CodeConverterSettings } from "./types";
 
 export class AutoConvertRiskModal extends Modal {
 	private settings: CodeConverterSettings;
-	private onAccept: () => void;
+	private onAccept: () => Promise<void>;
 	private onReject: () => void;
 
 	constructor(
 		app: App,
 		settings: CodeConverterSettings,
-		onAccept: () => void,
+		onAccept: () => Promise<void>,
 		onReject: () => void
 	) {
 		super(app);

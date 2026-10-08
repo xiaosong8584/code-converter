@@ -1,6 +1,6 @@
 /**
- * ä¹±ç ä¿®å¤ç¡®è®¤å¼¹çª—ï¼šå±•ç¤ºä¿®å¤é“¾ / è´¨é‡ / è¡Œæ•°ç»Ÿè®¡ + ä¿®å¤å‰åŽé¢„è§ˆã€‚
- * å®‰å…¨é˜€ï¼šä¿®å¤æ°¸è¿œä¸é™é»˜æ‰§è¡Œï¼Œå¿…é¡»ç»æ­¤å¼¹çª—ç”¨æˆ·ç¡®è®¤ã€‚
+ * ÂÒÂëÐÞ¸´È·ÈÏµ¯´°£ºÕ¹Ê¾ÐÞ¸´Á´ / ÖÊÁ¿ / ÐÐÊýÍ³¼Æ + ÐÞ¸´Ç°ºóÔ¤ÀÀ¡£
+ * °²È«·§£ºÐÞ¸´ÓÀÔ¶²»¾²Ä¬Ö´ÐÐ£¬±ØÐë¾­´Ëµ¯´°ÓÃ»§È·ÈÏ¡£
  */
 
 import { App, Modal, Setting } from "obsidian";
@@ -12,7 +12,7 @@ export class RepairConfirmModal extends Modal {
 	private result: RepairResult;
 	private originalText: string;
 	private vaultPath: string;
-	private onConfirm: (proceed: boolean) => void;
+	private onConfirm: (proceed: boolean) => Promise<void>;
 
 	constructor(
 		app: App,
@@ -20,7 +20,7 @@ export class RepairConfirmModal extends Modal {
 		originalText: string,
 		result: RepairResult,
 		private settings: CodeConverterSettings,
-		onConfirm: (proceed: boolean) => void
+		onConfirm: (proceed: boolean) => Promise<void>
 	) {
 		super(app);
 		this.vaultPath = vaultPath;
@@ -31,7 +31,7 @@ export class RepairConfirmModal extends Modal {
 
 	onOpen(): void {
 		const { contentEl } = this;
-		// RTL è¯­è¨€ï¼ˆé˜¿è¯­ï¼‰æ–¹å‘ç¿»è½¬
+		// RTL ÓïÑÔ£¨°¢Óï£©·½Ïò·­×ª
 		if (isRtl()) contentEl.setAttribute("dir", "rtl");
 
 		contentEl.createEl("h3", { text: t("modal.repair.title") });
@@ -52,11 +52,11 @@ export class RepairConfirmModal extends Modal {
 			});
 		}
 
-		// ä¿®å¤å‰é¢„è§ˆ
+		// ÐÞ¸´Ç°Ô¤ÀÀ
 		contentEl.createEl("p", { text: t("modal.repair.before") });
 		const pre = contentEl.createDiv("cc-preview");
 		pre.textContent = this.truncatePreview(this.originalText);
-		// ä¿®å¤åŽé¢„è§ˆ
+		// ÐÞ¸´ºóÔ¤ÀÀ
 		contentEl.createEl("p", { text: t("modal.repair.after") });
 		const post = contentEl.createDiv("cc-preview");
 		post.textContent = this.truncatePreview(this.result.text);
@@ -80,10 +80,10 @@ export class RepairConfirmModal extends Modal {
 			);
 	}
 
-	/** é¢„è§ˆæˆªæ–­ï¼ˆåŽŸæ–‡ä»¶å†…å®¹ä»…ä¾›äººçœ¼æ¯”å¯¹ï¼Œæ— éœ€å®Œæ•´å±•ç¤ºï¼‰ */
+	/** Ô¤ÀÀ½Ø¶Ï£¨Ô­ÎÄ¼þÄÚÈÝ½ö¹©ÈËÑÛ±È¶Ô£¬ÎÞÐèÍêÕûÕ¹Ê¾£© */
 	private truncatePreview(text: string): string {
 		const MAX = 400;
-		return text.length > MAX ? text.slice(0, MAX) + "â€¦" : text;
+		return text.length > MAX ? text.slice(0, MAX) + "¡­" : text;
 	}
 
 	onClose(): void {

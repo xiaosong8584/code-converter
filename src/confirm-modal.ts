@@ -48,10 +48,10 @@ export class EncodingConfirmModal extends Modal {
 		h.classList.add("cc-title");
 
 		// 文件信息
-		const fileRow = contentEl.createEl("div", { cls: "cc-file-row", text: this.file.path });
+		contentEl.createEl("div", { cls: "cc-file-row", text: this.file.path });
 
 		// 探测编码（textContent 而非 innerHTML，杜绝插值内容被当 HTML 解析）
-		const encRow = contentEl.createEl("div", {
+		contentEl.createEl("div", {
 			cls: "cc-detected",
 			text: t("modal.detected", {
 				enc: det.encoding,
@@ -61,7 +61,7 @@ export class EncodingConfirmModal extends Modal {
 
 		// 预览解码后的前 400 字符（帮助用户判断编码是否正确）
 		const preview = decodeWithEncoding(bytes, det.encoding).slice(0, 400);
-		const preEl = contentEl.createEl("pre", {
+		contentEl.createEl("pre", {
 			cls: "cc-preview",
 			text: preview || t("notice.emptyFile")
 		});
