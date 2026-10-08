@@ -1,11 +1,11 @@
 /**
- * Code Converter â€” ä¸»æ’ä»¶å…¥å£
+ * Code Converter ¡ª Ö÷²å¼şÈë¿Ú
  *
- * èŒè´£ï¼š
- * 1. æ³¨å†Œå‘½ä»¤ï¼šæ‰‹åŠ¨è½¬æ¢å½“å‰æ–‡ä»¶ã€æ‰«æå¹¶è½¬æ¢æŒ‡å®šæ–‡ä»¶å¤¹
- * 2. æ³¨å†Œè®¾ç½®é¢æ¿
- * 3. ç›‘å¬æ–‡ä»¶ create/modifyï¼Œå¯¹é UTF-8 æ–‡ä»¶åšå—ä¿æŠ¤è½¬æ¢ï¼ˆå¯å…³ï¼‰
- * 4. è‡ªè§¦å‘äº‹ä»¶é˜²å›ç¯ï¼ˆé¿å…æ’ä»¶å†™æ–‡ä»¶åˆè§¦å‘è‡ªå·±ï¼‰
+ * Ö°Ôğ£º
+ * 1. ×¢²áÃüÁî£ºÊÖ¶¯×ª»»µ±Ç°ÎÄ¼ş¡¢É¨Ãè²¢×ª»»Ö¸¶¨ÎÄ¼ş¼Ğ
+ * 2. ×¢²áÉèÖÃÃæ°å
+ * 3. ¼àÌıÎÄ¼ş create/modify£¬¶Ô·Ç UTF-8 ÎÄ¼ş×öÊÜ±£»¤×ª»»£¨¿É¹Ø£©
+ * 4. ×Ô´¥·¢ÊÂ¼ş·À»Ø»·£¨±ÜÃâ²å¼şĞ´ÎÄ¼şÓÖ´¥·¢×Ô¼º£©
  */
 
 import {
@@ -47,34 +47,34 @@ import type { VipState, VipSeal } from "./vip/vip";
 
 const PLUGIN_NAME = "Code Converter";
 
-// CSS å·²æŠ½åˆ°ä»“åº“æ ¹çš„ styles.cssï¼ˆå¯¹åº” obsidian-sample-plugin çš„æ ‡å‡†åšæ³•ï¼‰ï¼Œ
-// Obsidian åŠ è½½æ’ä»¶æ—¶ä¼šè‡ªåŠ¨ applyStylesheet åŠ è½½å®ƒâ€”â€”ä¸å†éœ€è¦åœ¨ onload é‡Œæ‰‹åŠ¨æ³¨å…¥ã€‚
+// CSS ÒÑ³éµ½²Ö¿â¸ùµÄ styles.css£¨¶ÔÓ¦ obsidian-sample-plugin µÄ±ê×¼×ö·¨£©£¬
+// Obsidian ¼ÓÔØ²å¼şÊ±»á×Ô¶¯ applyStylesheet ¼ÓÔØËü¡ª¡ª²»ÔÙĞèÒªÔÚ onload ÀïÊÖ¶¯×¢Èë¡£
 
 export default class CodeConverter extends Plugin {
 	settings: CodeConverterSettings = { ...DEFAULT_SETTINGS };
 
-	// è‡ªè§¦å‘ä¿æŠ¤ï¼šè®°å½•"æœ¬æ’ä»¶åˆšå†™è¿‡çš„æ–‡ä»¶ + æ—¶é—´æˆ³"ï¼Œç›‘å¬å™¨æ®æ­¤è·³è¿‡
+	// ×Ô´¥·¢±£»¤£º¼ÇÂ¼"±¾²å¼ş¸ÕĞ´¹ıµÄÎÄ¼ş + Ê±¼ä´Á"£¬¼àÌıÆ÷¾İ´ËÌø¹ı
 	private selfWritten = new Map<string, number>();
 	private static SELF_TTL_MS = 2000;
 
-	// æ­£åœ¨è‡ªåŠ¨è½¬æ¢ä¸­çš„æ–‡ä»¶ï¼šcreate+modify åŒäº‹ä»¶/è¿ç»­ä¿®æ”¹ä¼šå¯¹åŒä¸€æ–‡ä»¶å¹¶å‘è§¦å‘
-	// handleAutoDetectï¼Œå¯¼è‡´é‡å¤å¤‡ä»½+é‡å¤å†™å›â€”â€”ç”¨ in-flight é›†åˆå»é‡
+	// ÕıÔÚ×Ô¶¯×ª»»ÖĞµÄÎÄ¼ş£ºcreate+modify Ë«ÊÂ¼ş/Á¬ĞøĞŞ¸Ä»á¶ÔÍ¬Ò»ÎÄ¼ş²¢·¢´¥·¢
+	// handleAutoDetect£¬µ¼ÖÂÖØ¸´±¸·İ+ÖØ¸´Ğ´»Ø¡ª¡ªÓÃ in-flight ¼¯ºÏÈ¥ÖØ
 	private inFlight = new Set<string>();
 
-	// è½¬æ¢æ—¥å¿—ï¼ˆå†…å­˜æ”¶é›†ï¼Œç”¨äºå¯¼å‡ºï¼›onload æ—¶ä» logFile æ¢å¤ï¼‰
+	// ×ª»»ÈÕÖ¾£¨ÄÚ´æÊÕ¼¯£¬ÓÃÓÚµ¼³ö£»onload Ê±´Ó logFile »Ö¸´£©
 	private records: ConversionRecord[] = [];
 
-	// ---------- VIP / å¹¿å‘Šï¼ˆä¸ settings å¹³çº§å­˜æ”¾åœ¨ data.jsonï¼Œè§ loadSettingsï¼‰ ----------
-	/** è®¾å¤‡ IDï¼šé¦–æ¬¡è¿è¡Œç”Ÿæˆå¹¶ç«‹å³è½ç›˜ï¼Œé¿å…é‡è£…åå˜åŒ–å¯¼è‡´ä¸“ç”¨æ¿€æ´»ç å¤±æ•ˆ */
+	// ---------- VIP / ¹ã¸æ£¨Óë settings Æ½¼¶´æ·ÅÔÚ data.json£¬¼û loadSettings£© ----------
+	/** Éè±¸ ID£ºÊ×´ÎÔËĞĞÉú³É²¢Á¢¼´ÂäÅÌ£¬±ÜÃâÖØ×°ºó±ä»¯µ¼ÖÂ×¨ÓÃ¼¤»îÂëÊ§Ğ§ */
 	deviceId: string = "";
-	/** VIP æ¿€æ´»çŠ¶æ€ï¼ˆnull = æœªæ¿€æ´»/å·²å¤±æ•ˆï¼‰ã€‚æ‰‹æ”¹ data.json ä¼šè¢« seal æŒ‡çº¹æ‹¦æˆª */
+	/** VIP ¼¤»î×´Ì¬£¨null = Î´¼¤»î/ÒÑÊ§Ğ§£©¡£ÊÖ¸Ä data.json »á±» seal Ö¸ÎÆÀ¹½Ø */
 	vipState: VipState | null = null;
-	/** VIP å®Œæ•´æ€§æŒ‡çº¹ï¼šVIP è¿‡æœŸåä»éœ€ç»§ç»­æ¨è¿›è½ç›˜ï¼ˆæ—¶é—´é«˜æ°´ä½å•è°ƒä¸Šå‡çš„å…³é”®ï¼‰ */
+	/** VIP ÍêÕûĞÔÖ¸ÎÆ£ºVIP ¹ıÆÚºóÈÔĞè¼ÌĞøÍÆ½øÂäÅÌ£¨Ê±¼ä¸ßË®Î»µ¥µ÷ÉÏÉıµÄ¹Ø¼ü£© */
 	private vipSeal: VipSeal | null = null;
-	/** å¹¿å‘Šæ¨ªå¹…å±•ç¤ºçŠ¶æ€ï¼ˆlastShownAtï¼‰ï¼Œä¸ vip å¹³çº§ï¼ŒVIP å¤±æ•ˆä¸é‡ç½® */
+	/** ¹ã¸æºá·ùÕ¹Ê¾×´Ì¬£¨lastShownAt£©£¬Óë vip Æ½¼¶£¬VIP Ê§Ğ§²»ÖØÖÃ */
 	private adState: AdState | null = null;
 	private adBanner: AdBanner | null = null;
-	/** å— VIP é—¨ç¦çº¦æŸçš„å‘½ä»¤ï¼ˆæ¿€æ´»æˆåŠŸåè¦æŠŠå‘½ä»¤åä¸Šçš„ï¼ˆVIPï¼‰æ ‡è®°å»æ‰ï¼‰ */
+	/** ÊÜ VIP ÃÅ½ûÔ¼ÊøµÄÃüÁî£¨¼¤»î³É¹¦ºóÒª°ÑÃüÁîÃûÉÏµÄ£¨VIP£©±ê¼ÇÈ¥µô£© */
 	private vipGatedCommands: { cmd: Command; baseName: string }[] = [];
 
 	async onload(): Promise<void> {
@@ -82,16 +82,16 @@ export default class CodeConverter extends Plugin {
 
 		this.addSettingTab(new CodeConverterSettingTab(this.app, this));
 
-		// æ¢å¤å†å²è½¬æ¢æ—¥å¿—ï¼ˆè‹¥é…ç½®äº† logFileï¼‰ã€‚
-		// ç”¨ concat è€Œéæ•´ä½“èµ‹å€¼ï¼šæ¢å¤æ˜¯å¼‚æ­¥çš„ï¼Œè‹¥æ¢å¤å®Œæˆå‰å·²æœ‰æ–°è®°å½•å…¥åˆ—ï¼Œ
-		// ç›´æ¥ this.records = rs ä¼šæŠŠå®ƒä»¬å†²æ‰ã€‚
+		// »Ö¸´ÀúÊ·×ª»»ÈÕÖ¾£¨ÈôÅäÖÃÁË logFile£©¡£
+		// ÓÃ concat ¶ø·ÇÕûÌå¸³Öµ£º»Ö¸´ÊÇÒì²½µÄ£¬Èô»Ö¸´Íê³ÉÇ°ÒÑÓĞĞÂ¼ÇÂ¼ÈëÁĞ£¬
+		// Ö±½Ó this.records = rs »á°ÑËüÃÇ³åµô¡£
 		if (this.settings.logFile) {
 			loadFromFile(this.app.vault, this.settings.logFile)
 				.then((rs) => (this.records = rs.concat(this.records)))
 				.catch(() => {});
 		}
 
-		// ---------- å‘½ä»¤ï¼šè½¬æ¢å½“å‰æ–‡ä»¶ ----------
+		// ---------- ÃüÁî£º×ª»»µ±Ç°ÎÄ¼ş ----------
 		this.addCommand({
 			id: "cc-convert-current",
 			name: t("cmd.convertCurrent"),
@@ -102,7 +102,7 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- å‘½ä»¤ï¼šæ‰«æå¹¶è½¬æ¢å½“å‰æ–‡ä»¶å¤¹ï¼ˆVIP å¢å¼ºåŠŸèƒ½ï¼‰----------
+		// ---------- ÃüÁî£ºÉ¨Ãè²¢×ª»»µ±Ç°ÎÄ¼ş¼Ğ£¨VIP ÔöÇ¿¹¦ÄÜ£©----------
 		this.addVipCommand({
 			id: "cc-convert-folder",
 			baseName: t("cmd.convertFolder"),
@@ -113,7 +113,7 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- å‘½ä»¤ï¼šæ£€æµ‹ï¼ˆä»…æŠ¥å‘Šï¼Œä¸è½¬æ¢ï¼‰----------
+		// ---------- ÃüÁî£º¼ì²â£¨½ö±¨¸æ£¬²»×ª»»£©----------
 		this.addCommand({
 			id: "cc-detect-current",
 			name: t("cmd.detectCurrent"),
@@ -124,7 +124,7 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- å‘½ä»¤ï¼šå¯¼å‡ºè½¬æ¢æ—¥å¿—ï¼ˆJSON / Markdownï¼‰----------
+		// ---------- ÃüÁî£ºµ¼³ö×ª»»ÈÕÖ¾£¨JSON / Markdown£©----------
 		this.addCommand({
 			id: "cc-export-log-json",
 			name: t("cmd.exportLog"),
@@ -144,7 +144,7 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- å‘½ä»¤ï¼šä¿®å¤å½“å‰æ–‡ä»¶ä¸­çš„ä¹±ç ï¼ˆäºŒæ¬¡ç¼–ç ä¿®å¤ï¼Œå®éªŒæ€§ï¼‰----------
+		// ---------- ÃüÁî£ºĞŞ¸´µ±Ç°ÎÄ¼şÖĞµÄÂÒÂë£¨¶ş´Î±àÂëĞŞ¸´£¬ÊµÑéĞÔ£©----------
 		this.addCommand({
 			id: "cc-repair-current",
 			name: t("cmd.repairCurrent"),
@@ -155,30 +155,30 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- ç›‘å¬ï¼šå¯¼å…¥è‡ªåŠ¨æ£€æµ‹ï¼ˆé»˜è®¤å…³é—­ï¼‰ ----------
-		// é—¸é—¨èµ°æ‰©å±•åç™½åå•ï¼ˆé»˜è®¤ mdï¼Œå¯åœ¨è®¾ç½®é‡Œæ‰©å±•ï¼‰ã€‚æ‰‹åŠ¨ã€Œè½¬æ¢å½“å‰æ–‡ä»¶ã€
-		// ä¸ç»è¿‡è¿™é‡Œâ€”â€”ç”¨æˆ·å·²ç»æ˜ç¡®æŒ‡å®šäº†ç›®æ ‡æ–‡ä»¶ï¼Œæ‹¦å®ƒæ²¡æœ‰æ„ä¹‰ã€‚
+		// ---------- ¼àÌı£ºµ¼Èë×Ô¶¯¼ì²â£¨Ä¬ÈÏ¹Ø±Õ£© ----------
+		// Õ¢ÃÅ×ßÀ©Õ¹Ãû°×Ãûµ¥£¨Ä¬ÈÏ md£¬¿ÉÔÚÉèÖÃÀïÀ©Õ¹£©¡£ÊÖ¶¯¡¸×ª»»µ±Ç°ÎÄ¼ş¡¹
+		// ²»¾­¹ıÕâÀï¡ª¡ªÓÃ»§ÒÑ¾­Ã÷È·Ö¸¶¨ÁËÄ¿±êÎÄ¼ş£¬À¹ËüÃ»ÓĞÒâÒå¡£
 		this.registerEvent(
 			this.app.vault.on("create", (f: TAbstractFile) => {
 				if (f instanceof TFile && this.isConvertibleFile(f)) {
-					this.handleAutoDetect(f);
+					void this.handleAutoDetect(f);
 				}
 			})
 		);
 		this.registerEvent(
 			this.app.vault.on("modify", (f: TAbstractFile) => {
 				if (f instanceof TFile && this.isConvertibleFile(f)) {
-					this.handleAutoDetect(f);
+					void this.handleAutoDetect(f);
 				}
 			})
 		);
 
-		// ---------- ç›‘å¬ï¼šæ–‡ä»¶è¢«æ‰“å¼€æ—¶ç«‹åˆ»æ£€æµ‹å¹¶è½¬æ¢ï¼ˆçµé­‚åŠŸèƒ½ï¼‰----------
-		// æ—¶åºï¼šObsidian ç”¨ UTF-8 è§£ç  GBK æ–‡ä»¶åæŠŠä¹±ç ç¼“å­˜åˆ° viewï¼Œç”¨æˆ·æŒ‰
-		// Ctrl+S æˆ– autosave å°±æŠŠè¿™ä¸ªä¹±ç æŒ‰ UTF-8 å†™å›ç£ç›˜ï¼Œä¿¡æ¯æ°¸ä¹…ä¸¢å¤±ã€‚
-		// file-open æ˜¯æ’ä»¶èƒ½æå‰ä»‹å…¥çš„å”¯ä¸€çª—å£â€”â€”è§¦å‘æ—¶ç£ç›˜ä¸Šè¿˜æ˜¯åŸå­—èŠ‚ï¼Œ
-		// æˆ‘ä»¬ç«‹åˆ»è½¬æˆ UTF-8 å†™å›ï¼›Obsidian æ£€æµ‹åˆ°å¤–éƒ¨ä¿®æ”¹ + view å¹²å‡€ä¼š
-		// è‡ªåŠ¨é‡æ–°åŠ è½½ï¼Œç”¨æˆ·çœ‹åˆ°çš„æ˜¯æ­£ç¡®çš„ä¸­æ–‡è€Œéä¹±ç ã€‚
+		// ---------- ¼àÌı£ºÎÄ¼ş±»´ò¿ªÊ±Á¢¿Ì¼ì²â²¢×ª»»£¨Áé»ê¹¦ÄÜ£©----------
+		// Ê±Ğò£ºObsidian ÓÃ UTF-8 ½âÂë GBK ÎÄ¼şºó°ÑÂÒÂë»º´æµ½ view£¬ÓÃ»§°´
+		// Ctrl+S »ò autosave ¾Í°ÑÕâ¸öÂÒÂë°´ UTF-8 Ğ´»Ø´ÅÅÌ£¬ĞÅÏ¢ÓÀ¾Ã¶ªÊ§¡£
+		// file-open ÊÇ²å¼şÄÜÌáÇ°½éÈëµÄÎ¨Ò»´°¿Ú¡ª¡ª´¥·¢Ê±´ÅÅÌÉÏ»¹ÊÇÔ­×Ö½Ú£¬
+		// ÎÒÃÇÁ¢¿Ì×ª³É UTF-8 Ğ´»Ø£»Obsidian ¼ì²âµ½Íâ²¿ĞŞ¸Ä + view ¸É¾»»á
+		// ×Ô¶¯ÖØĞÂ¼ÓÔØ£¬ÓÃ»§¿´µ½µÄÊÇÕıÈ·µÄÖĞÎÄ¶ø·ÇÂÒÂë¡£
 		this.registerEvent(
 			this.app.workspace.on("file-open", (file) => {
 				if (file instanceof TFile && this.isConvertibleFile(file)) {
@@ -187,10 +187,10 @@ export default class CodeConverter extends Plugin {
 			})
 		);
 
-		// å¯åŠ¨æ—¶æ‰«æå·²ç»æ‰“å¼€çš„ markdown æ–‡ä»¶ï¼šObsidian æ¢å¤ workspace æ—¶ä¸ä¼šä¸º
-		// å·²æœ‰ tab è§¦å‘ file-openï¼ˆå®ƒä»¬æ˜¯ä¸Šæ¬¡å¯åŠ¨å°±æ‰“å¼€çš„ï¼‰ï¼Œé‚£äº› tab é‡Œçš„
-		// é UTF-8 æ–‡ä»¶å¦‚æœä¸åœ¨å¯åŠ¨æ—¶å¤„ç†ï¼Œç”¨æˆ·æŒ‰ Ctrl+S å°±ä¼šæŠŠ Obsidian ç¼“å­˜
-		// çš„ä¹±ç å†™å›ç£ç›˜ã€‚layoutReady ä¹‹åå†æ‰«ï¼Œé¿å… workspace æœªå°±ç»ªæ—¶ view ä¸º nullã€‚
+		// Æô¶¯Ê±É¨ÃèÒÑ¾­´ò¿ªµÄ markdown ÎÄ¼ş£ºObsidian »Ö¸´ workspace Ê±²»»áÎª
+		// ÒÑÓĞ tab ´¥·¢ file-open£¨ËüÃÇÊÇÉÏ´ÎÆô¶¯¾Í´ò¿ªµÄ£©£¬ÄÇĞ© tab ÀïµÄ
+		// ·Ç UTF-8 ÎÄ¼şÈç¹û²»ÔÚÆô¶¯Ê±´¦Àí£¬ÓÃ»§°´ Ctrl+S ¾Í»á°Ñ Obsidian »º´æ
+		// µÄÂÒÂëĞ´»Ø´ÅÅÌ¡£layoutReady Ö®ºóÔÙÉ¨£¬±ÜÃâ workspace Î´¾ÍĞ÷Ê± view Îª null¡£
 		this.app.workspace.onLayoutReady(() => {
 			const seen = new Set<string>();
 			for (const leaf of this.app.workspace.getLeavesOfType("markdown")) {
@@ -203,12 +203,12 @@ export default class CodeConverter extends Plugin {
 			}
 		});
 
-		// ---------- å¹¿å‘Šæ¨ªå¹…ï¼ˆæ”¯æŒä½œè€…æ¡ï¼ŒVIP æ°¸ä¹…éšè—ï¼‰ ----------
+		// ---------- ¹ã¸æºá·ù£¨Ö§³Ö×÷ÕßÌõ£¬VIP ÓÀ¾ÃÒş²Ø£© ----------
 		this.adBanner = new AdBanner(
 			(url) => window.open(url),
 			(key) => t(key),
 			() => {
-				// ç”¨æˆ·æ‰‹åŠ¨å…³é—­ä¹Ÿè®°ä¸€æ¬¡ã€Œå·²å±•ç¤ºã€ï¼Œé¿å…åŒä¸€å¤©åå¤å¼¹
+				// ÓÃ»§ÊÖ¶¯¹Ø±ÕÒ²¼ÇÒ»´Î¡¸ÒÑÕ¹Ê¾¡¹£¬±ÜÃâÍ¬Ò»Ìì·´¸´µ¯
 				this.adState = markAdShown(this.adState);
 				this.saveSettings().catch(() => {});
 			}
@@ -226,35 +226,35 @@ export default class CodeConverter extends Plugin {
 		this.adBanner = null;
 	}
 
-	// ---------- è®¾ç½®æŒä¹…åŒ– ----------
+	// ---------- ÉèÖÃ³Ö¾Ã»¯ ----------
 	private async loadSettings(): Promise<void> {
 		const loaded = (await this.loadData()) as Record<string, unknown> | null;
 		const data = loaded ?? {};
 
-		// deviceId / vip / seal / adState ä¸ settings å¹³çº§å­˜æ”¾åœ¨ data.jsonï¼Œ
-		// ä¸å±äº CodeConverterSettingsï¼šå…ˆå–èµ°å†åˆå¹¶ï¼Œé¿å…æ··è¿› settings å¯¹è±¡ã€‚
+		// deviceId / vip / seal / adState Óë settings Æ½¼¶´æ·ÅÔÚ data.json£¬
+		// ²»ÊôÓÚ CodeConverterSettings£ºÏÈÈ¡×ßÔÙºÏ²¢£¬±ÜÃâ»ì½ø settings ¶ÔÏó¡£
 		if (typeof data.deviceId === "string" && data.deviceId) {
 			this.deviceId = data.deviceId;
 		} else {
-			// é¦–æ¬¡è¿è¡Œç”Ÿæˆ deviceId å¹¶ç«‹å³è½ç›˜ï¼Œé¿å…é‡è£…åå˜åŒ–å¯¼è‡´ä¸“ç”¨æ¿€æ´»ç å¤±æ•ˆ
+			// Ê×´ÎÔËĞĞÉú³É deviceId ²¢Á¢¼´ÂäÅÌ£¬±ÜÃâÖØ×°ºó±ä»¯µ¼ÖÂ×¨ÓÃ¼¤»îÂëÊ§Ğ§
 			this.deviceId = generateUUID();
 			await this.saveData({ ...data, deviceId: this.deviceId });
 		}
 
-		// å¹³çº§å­—æ®µä¸è¿› settings å¯¹è±¡ï¼ˆå‰¥ç¦»ååˆå¹¶ï¼Œé¿å…è„é”®ï¼‰
+		// Æ½¼¶×Ö¶Î²»½ø settings ¶ÔÏó£¨°şÀëºóºÏ²¢£¬±ÜÃâÔà¼ü£©
 		const { deviceId: _d, vip: _v, seal: _s, adState: _a, ...settingsOnly } = data;
 		Object.assign(this.settings, DEFAULT_SETTINGS, settingsOnly);
-		// åˆå§‹åŒ–ç•Œé¢è¯­è¨€ï¼ˆrestoreVipState å¯èƒ½ç«‹åˆ»å¼¹ Noticeï¼Œå¿…é¡»å…ˆåˆ‡å¥½è¯­è¨€ï¼‰
+		// ³õÊ¼»¯½çÃæÓïÑÔ£¨restoreVipState ¿ÉÄÜÁ¢¿Ìµ¯ Notice£¬±ØĞëÏÈÇĞºÃÓïÑÔ£©
 		setLocale(this.settings.locale);
-		// æ¢å¤ VIP çŠ¶æ€ï¼šä¸ä¿¡ä»» data.jsonï¼Œéœ€è¿‡å®Œæ•´æ€§æŒ‡çº¹ + æŒ‰æ—¶é—´é«˜æ°´ä½åˆ¤åˆ°æœŸ
+		// »Ö¸´ VIP ×´Ì¬£º²»ĞÅÈÎ data.json£¬Ğè¹ıÍêÕûĞÔÖ¸ÎÆ + °´Ê±¼ä¸ßË®Î»ÅĞµ½ÆÚ
 		await this.restoreVipState(
 			data.vip as VipState | undefined,
 			data.seal as VipSeal | undefined
 		);
-		// ç•Œé¢è¯­è¨€é—¨ç¦ï¼šVIP å¤±æ•ˆåè‹¥ä»åœç•™åœ¨ VIP è¯­è¨€ï¼Œå›è½åˆ°å…è´¹è¯­è¨€ï¼ˆenï¼‰
+		// ½çÃæÓïÑÔÃÅ½û£ºVIP Ê§Ğ§ºóÈôÈÔÍ£ÁôÔÚ VIP ÓïÑÔ£¬»ØÂäµ½Ãâ·ÑÓïÑÔ£¨en£©
 		this.applyLocaleGate();
 
-		// æ¢å¤å¹¿å‘ŠçŠ¶æ€ï¼šä¸ vip å¹³çº§ï¼ŒVIP å¤±æ•ˆä¸é‡ç½® lastShownAt
+		// »Ö¸´¹ã¸æ×´Ì¬£ºÓë vip Æ½¼¶£¬VIP Ê§Ğ§²»ÖØÖÃ lastShownAt
 		this.adState = (data.adState as AdState | null) ?? null;
 	}
 
@@ -263,27 +263,27 @@ export default class CodeConverter extends Plugin {
 			...this.settings,
 			deviceId: this.deviceId,
 			vip: this.vipState,
-			// æŒ‡çº¹å•ç‹¬è½ç›˜ï¼šVIP è¿‡æœŸåå®ƒä»éœ€ç»§ç»­æ¨è¿›ï¼Œè§ restoreVipState
+			// Ö¸ÎÆµ¥¶ÀÂäÅÌ£ºVIP ¹ıÆÚºóËüÈÔĞè¼ÌĞøÍÆ½ø£¬¼û restoreVipState
 			seal: this.vipSeal,
-			// å¹¿å‘ŠçŠ¶æ€å¹³çº§è½ç›˜ï¼šVIP å¤±æ•ˆæ—¶ adState ä¿ç•™ï¼ˆlastShownAt ä¸é‡ç½®ï¼‰
+			// ¹ã¸æ×´Ì¬Æ½¼¶ÂäÅÌ£ºVIP Ê§Ğ§Ê± adState ±£Áô£¨lastShownAt ²»ÖØÖÃ£©
 			adState: this.adState
 		});
 	}
 
 	// ---------- VIP ----------
 	/**
-	 * å¯åŠ¨æ—¶æ¢å¤ VIP çŠ¶æ€ï¼ˆä¸ä¿¡ä»» data.jsonï¼Œè§ src/vip/seal.ts æ–‡ä»¶å¤´çš„å¨èƒæ¨¡å‹ï¼‰ã€‚
+	 * Æô¶¯Ê±»Ö¸´ VIP ×´Ì¬£¨²»ĞÅÈÎ data.json£¬¼û src/vip/seal.ts ÎÄ¼şÍ·µÄÍşĞ²Ä£ĞÍ£©¡£
 	 *
-	 * åˆ¤å®šé¡ºåºæŒ‰æˆæœ¬ä»ä½åˆ°é«˜ï¼šæ— è®°å½• â†’ ç¼º sealï¼ˆä¸å¯ä¿¡ï¼Œè¦æ±‚é‡æ–°æ¿€æ´»ï¼‰â†’
-	 * seal æ ¡éªŒå¤±è´¥ â†’ é€šè¿‡åæŒ‰æ—¶é—´é«˜æ°´ä½åˆ¤åˆ°æœŸã€‚
-	 * ç¬¬ 4 æ­¥æ˜¯å”¯ä¸€å†™æ“ä½œï¼šmaxSeen æ¯æ¬¡å¯åŠ¨æŠ¬é«˜ä¸€æ¬¡ï¼Œæ­£æ˜¯å›æ‹¨æ—¶é’Ÿå¤±æ•ˆçš„åŸå› ã€‚
-	 * å†™ç›˜å¤±è´¥åªé™çº§ä¸º console.warnï¼Œä¸‹æ¬¡å¯åŠ¨ä¼šé‡è·‘åŒä¸€å¥—åˆ¤å®šã€‚
+	 * ÅĞ¶¨Ë³Ğò°´³É±¾´ÓµÍµ½¸ß£ºÎŞ¼ÇÂ¼ ¡ú È± seal£¨²»¿ÉĞÅ£¬ÒªÇóÖØĞÂ¼¤»î£©¡ú
+	 * seal Ğ£ÑéÊ§°Ü ¡ú Í¨¹ıºó°´Ê±¼ä¸ßË®Î»ÅĞµ½ÆÚ¡£
+	 * µÚ 4 ²½ÊÇÎ¨Ò»Ğ´²Ù×÷£ºmaxSeen Ã¿´ÎÆô¶¯Ì§¸ßÒ»´Î£¬ÕıÊÇ»Ø²¦Ê±ÖÓÊ§Ğ§µÄÔ­Òò¡£
+	 * Ğ´ÅÌÊ§°ÜÖ»½µ¼¶Îª console.warn£¬ÏÂ´ÎÆô¶¯»áÖØÅÜÍ¬Ò»Ì×ÅĞ¶¨¡£
 	 */
 	private async restoreVipState(storedVip: VipState | undefined, storedSeal: VipSeal | undefined): Promise<void> {
 		const r = await restoreVipStateImpl(storedVip, storedSeal, this.deviceId);
 
 		if (r.clockRolledBack) {
-			// ä»…è®°å½•ä¸æç¤ºï¼šåˆ°æœŸåˆ¤å®šå·²æŒ‰é«˜æ°´ä½è®¡ç®—ï¼Œç”¨æˆ·æ— æ„Ÿ
+			// ½ö¼ÇÂ¼²»ÌáÊ¾£ºµ½ÆÚÅĞ¶¨ÒÑ°´¸ßË®Î»¼ÆËã£¬ÓÃ»§ÎŞ¸Ğ
 			console.warn(
 				`[code-converter] system clock below high-water mark (opens=${r.seal?.opens ?? "-"}), judged by high-water mark`
 			);
@@ -294,7 +294,7 @@ export default class CodeConverter extends Plugin {
 				this.vipState = null;
 				break;
 			case "invalidated":
-				// no-seal / wrong-device / tampered / malformed éƒ½èµ°è¿™é‡Œ
+				// no-seal / wrong-device / tampered / malformed ¶¼×ßÕâÀï
 				this.vipState = null;
 				console.warn(`[code-converter] VIP state untrusted (${r.reason}), re-activation required`);
 				new Notice(`[Code Converter] ${t("vip.notice.invalidated")}`, 6000);
@@ -312,10 +312,10 @@ export default class CodeConverter extends Plugin {
 				break;
 		}
 
-		// æŒ‡çº¹å¿…é¡»è½ç›˜ â€”â€” æ— è®º VIP æ˜¯ active è¿˜æ˜¯ expiredã€‚
-		// maxSeen åªåœ¨æŒ‡çº¹æ ¡éªŒé€šè¿‡åæ¨è¿›ï¼›è‹¥ VIP è¿‡æœŸå°±ä¸è½ç›˜ï¼Œé«˜æ°´ä½ä¼šåœåœ¨
-		// ã€Œæœ€åä¸€æ¬¡æˆåŠŸåŠ è½½ã€ï¼Œå›æ‹¨ç³»ç»Ÿæ—¶é’Ÿå³å¯é‡æ–°ä¹°åˆ°æœ‰æ•ˆæœŸã€‚
-		// å…ˆå†™çŠ¶æ€å†è½ç›˜ï¼Œé¿å…è¿™æ¬¡ saveSettings æŠŠ vip å†™æˆ nullã€‚
+		// Ö¸ÎÆ±ØĞëÂäÅÌ ¡ª¡ª ÎŞÂÛ VIP ÊÇ active »¹ÊÇ expired¡£
+		// maxSeen Ö»ÔÚÖ¸ÎÆĞ£ÑéÍ¨¹ıºóÍÆ½ø£»Èô VIP ¹ıÆÚ¾Í²»ÂäÅÌ£¬¸ßË®Î»»áÍ£ÔÚ
+		// ¡¸×îºóÒ»´Î³É¹¦¼ÓÔØ¡¹£¬»Ø²¦ÏµÍ³Ê±ÖÓ¼´¿ÉÖØĞÂÂòµ½ÓĞĞ§ÆÚ¡£
+		// ÏÈĞ´×´Ì¬ÔÙÂäÅÌ£¬±ÜÃâÕâ´Î saveSettings °Ñ vip Ğ´³É null¡£
 		if (r.seal) {
 			this.vipSeal = r.seal;
 			this.saveSettings().catch((e) =>
@@ -324,21 +324,21 @@ export default class CodeConverter extends Plugin {
 		}
 	}
 
-	// ---------- VIP åŠŸèƒ½é—¨ç¦ ----------
+	// ---------- VIP ¹¦ÄÜÃÅ½û ----------
 	/**
-	 * æœ¬æ¬¡å¯åŠ¨åˆ¤å®šåçš„ VIP æ˜¯å¦æœ‰æ•ˆã€‚
-	 * vipState å·²ç»è¿‡ seal å®Œæ•´æ€§æ ¡éªŒä¸åˆ°æœŸåˆ¤å®šï¼Œä¸º null æ—¶ä¸€å¾‹æŒ‰é VIP å¤„ç†ã€‚
+	 * ±¾´ÎÆô¶¯ÅĞ¶¨ºóµÄ VIP ÊÇ·ñÓĞĞ§¡£
+	 * vipState ÒÑ¾­¹ı seal ÍêÕûĞÔĞ£ÑéÓëµ½ÆÚÅĞ¶¨£¬Îª null Ê±Ò»ÂÉ°´·Ç VIP ´¦Àí¡£
 	 */
 	isVipActive(): boolean {
 		return this.vipState?.active === true;
 	}
 
 	/**
-	 * ç•Œé¢è¯­è¨€é—¨ç¦ï¼šé VIP å´åœç•™åœ¨ VIP è¯­è¨€ â†’ å›è½åˆ° FALLBACK_LOCALEã€‚
+	 * ½çÃæÓïÑÔÃÅ½û£º·Ç VIP È´Í£ÁôÔÚ VIP ÓïÑÔ ¡ú »ØÂäµ½ FALLBACK_LOCALE¡£
 	 *
-	 * è§¦å‘åœºæ™¯ï¼šVIP åˆ°æœŸ / data.json è¢«åˆ¤ä¸å¯ä¿¡ / æ‰‹æ”¹è¿‡ data.jsonã€‚
-	 * åªæ”¹å†…å­˜é‡Œçš„ settings.localeã€ä¸è½ç›˜ï¼šç”¨æˆ·é‡æ–°æ¿€æ´» VIP åå¯ä»¥ç›´æ¥åœ¨
-	 * ä¸‹æ‹‰é‡Œé€‰å›åŸè¯­è¨€ï¼Œä¸ä¼šè¢«è¿™æ¬¡å›è½æ´—æ‰ã€‚
+	 * ´¥·¢³¡¾°£ºVIP µ½ÆÚ / data.json ±»ÅĞ²»¿ÉĞÅ / ÊÖ¸Ä¹ı data.json¡£
+	 * Ö»¸ÄÄÚ´æÀïµÄ settings.locale¡¢²»ÂäÅÌ£ºÓÃ»§ÖØĞÂ¼¤»î VIP ºó¿ÉÒÔÖ±½ÓÔÚ
+	 * ÏÂÀ­ÀïÑ¡»ØÔ­ÓïÑÔ£¬²»»á±»Õâ´Î»ØÂäÏ´µô¡£
 	 */
 	private applyLocaleGate(): void {
 		if (!isLocaleLocked(this.settings.locale, this.isVipActive())) return;
@@ -347,24 +347,24 @@ export default class CodeConverter extends Plugin {
 	}
 
 	/**
-	 * VIP æ¿€æ´»æˆåŠŸååˆ·æ–°å…¨éƒ¨é—¨ç¦ï¼šæŠŠå‘½ä»¤åä¸Šçš„ï¼ˆVIPï¼‰æ ‡è®°å»æ‰ã€‚
+	 * VIP ¼¤»î³É¹¦ºóË¢ĞÂÈ«²¿ÃÅ½û£º°ÑÃüÁîÃûÉÏµÄ£¨VIP£©±ê¼ÇÈ¥µô¡£
 	 *
-	 * `Command.name` æ˜¯æ™®é€šå¯å†™å±æ€§ï¼ˆobsidian.d.ts:1710ï¼‰ï¼Œå‘½ä»¤é¢æ¿æ¯æ¬¡æ‰“å¼€
-	 * æ—¶é‡æ–°è¯»å–ï¼Œæ‰€ä»¥ç›´æ¥èµ‹å€¼å³å¯ç”Ÿæ•ˆï¼Œæ— éœ€é‡æ–°æ³¨å†Œå‘½ä»¤ã€‚
+	 * `Command.name` ÊÇÆÕÍ¨¿ÉĞ´ÊôĞÔ£¨obsidian.d.ts:1710£©£¬ÃüÁîÃæ°åÃ¿´Î´ò¿ª
+	 * Ê±ÖØĞÂ¶ÁÈ¡£¬ËùÒÔÖ±½Ó¸³Öµ¼´¿ÉÉúĞ§£¬ÎŞĞèÖØĞÂ×¢²áÃüÁî¡£
 	 */
 	private refreshVipGates(): void {
 		for (const g of this.vipGatedCommands) g.cmd.name = g.baseName;
 	}
 
 	/**
-	 * æ³¨å†Œä¸€ä¸ªã€ŒVIP å¢å¼ºåŠŸèƒ½ã€å‘½ä»¤ã€‚
+	 * ×¢²áÒ»¸ö¡¸VIP ÔöÇ¿¹¦ÄÜ¡¹ÃüÁî¡£
 	 *
-	 * - é VIPï¼šå‘½ä»¤åè¿½åŠ ï¼ˆVIPï¼‰æ ‡è®°ï¼›ç‚¹å‡»æ—¶**ä¸æ‰§è¡ŒåŠŸèƒ½æœ¬ä½“**ï¼Œå…ˆæç¤ºåŸå› å†
-	 *   ç›´æ¥æ‰“å¼€æ¿€æ´»å¼¹çª—ï¼ˆç»™ä¸€æ¡æœ€çŸ­çš„è§£é”è·¯å¾„ï¼‰ã€‚
-	 * - VIPï¼šå‘½ä»¤åå³åŸåï¼Œæ­£å¸¸æ‰§è¡Œã€‚
+	 * - ·Ç VIP£ºÃüÁîÃû×·¼Ó£¨VIP£©±ê¼Ç£»µã»÷Ê±**²»Ö´ĞĞ¹¦ÄÜ±¾Ìå**£¬ÏÈÌáÊ¾Ô­ÒòÔÙ
+	 *   Ö±½Ó´ò¿ª¼¤»îµ¯´°£¨¸øÒ»Ìõ×î¶ÌµÄ½âËøÂ·¾¶£©¡£
+	 * - VIP£ºÃüÁîÃû¼´Ô­Ãû£¬Õı³£Ö´ĞĞ¡£
 	 *
-	 * å‘½ä»¤ä¿æŒæ³¨å†Œï¼ˆè€ŒéæŒ‰éœ€ addCommandï¼‰æ˜¯ä¸ºäº†å¯å‘ç°æ€§ï¼šç”¨æˆ·èƒ½åœ¨å‘½ä»¤é¢æ¿çœ‹åˆ°
-	 * æœ‰è¿™ä¸ªåŠŸèƒ½ã€ä»¥åŠå®ƒæ˜¯ä»˜è´¹çš„ï¼Œç¬¦åˆ Obsidian ä»˜è´¹åŠŸèƒ½å¿…é¡»æ˜ç¡®æŠ«éœ²çš„è¦æ±‚ã€‚
+	 * ÃüÁî±£³Ö×¢²á£¨¶ø·Ç°´Ğè addCommand£©ÊÇÎªÁË¿É·¢ÏÖĞÔ£ºÓÃ»§ÄÜÔÚÃüÁîÃæ°å¿´µ½
+	 * ÓĞÕâ¸ö¹¦ÄÜ¡¢ÒÔ¼°ËüÊÇ¸¶·ÑµÄ£¬·ûºÏ Obsidian ¸¶·Ñ¹¦ÄÜ±ØĞëÃ÷È·ÅûÂ¶µÄÒªÇó¡£
 	 */
 	private addVipCommand(def: { id: string; baseName: string; run: () => void }): void {
 		const active = this.isVipActive();
@@ -376,7 +376,7 @@ export default class CodeConverter extends Plugin {
 					def.run();
 					return;
 				}
-				// isCommandLocked æ˜¯åˆ¤å®šçœŸæºï¼ˆé¿å…è¿™é‡Œçš„åˆ¤æ–­ä¸ gate æ¸…å•èµ°åï¼‰
+				// isCommandLocked ÊÇÅĞ¶¨ÕæÔ´£¨±ÜÃâÕâÀïµÄÅĞ¶ÏÓë gate Çåµ¥×ßÆ«£©
 				if (!isCommandLocked(def.id, false)) {
 					def.run();
 					return;
@@ -389,28 +389,28 @@ export default class CodeConverter extends Plugin {
 	}
 
 	/**
-	 * æ¿€æ´»æˆåŠŸåé“¸é€ å¹¶æŒä¹…åŒ–é¦–ä»½å®Œæ•´æ€§æŒ‡çº¹ï¼ˆç”± VipActivationModal è°ƒç”¨ï¼‰ã€‚
+	 * ¼¤»î³É¹¦ºóÖıÔì²¢³Ö¾Ã»¯Ê×·İÍêÕûĞÔÖ¸ÎÆ£¨ÓÉ VipActivationModal µ÷ÓÃ£©¡£
 	 *
-	 * maxSeen å–ã€Œå½“å‰æ—¶é—´ã€ä¸ã€Œå†å²é«˜æ°´ä½ã€çš„è¾ƒå¤§è€…ï¼šé‡æ–°æ¿€æ´»ä¸é‡ç½®æ—¶é—´å¤©èŠ±æ¿ï¼Œ
-	 * å¦åˆ™ã€Œå›æ‹¨æ—¶é’Ÿ â†’ ç”¨æ–°ç æ¿€æ´»ã€å¯ä»¥æŠŠä¸Šé™å‹å›æ—©æœŸæ—¶é—´ã€‚
+	 * maxSeen È¡¡¸µ±Ç°Ê±¼ä¡¹Óë¡¸ÀúÊ·¸ßË®Î»¡¹µÄ½Ï´óÕß£ºÖØĞÂ¼¤»î²»ÖØÖÃÊ±¼äÌì»¨°å£¬
+	 * ·ñÔò¡¸»Ø²¦Ê±ÖÓ ¡ú ÓÃĞÂÂë¼¤»î¡¹¿ÉÒÔ°ÑÉÏÏŞÑ¹»ØÔçÆÚÊ±¼ä¡£
 	 */
 	async activateVip(state: VipState, rawCode: string): Promise<void> {
 		const baseMaxSeen = Math.max(Date.now(), this.vipSeal?.maxSeen ?? 0);
 		this.vipSeal = await makeSeal(this.deviceId, rawCode, baseMaxSeen);
 		this.vipState = state;
-		// è§£é”å…¨éƒ¨ VIP å¢å¼ºåŠŸèƒ½ï¼ˆå‘½ä»¤åå»æ‰ï¼ˆVIPï¼‰æ ‡è®°ï¼‰
+		// ½âËøÈ«²¿ VIP ÔöÇ¿¹¦ÄÜ£¨ÃüÁîÃûÈ¥µô£¨VIP£©±ê¼Ç£©
 		this.refreshVipGates();
-		// æ¿€æ´» VIP åç«‹å³éšè—æ¨ªå¹…å¹¶æŠŠå¹¿å‘ŠçŠ¶æ€ç½®ä¸ºã€Œå·²å±•ç¤ºã€
+		// ¼¤»î VIP ºóÁ¢¼´Òş²Øºá·ù²¢°Ñ¹ã¸æ×´Ì¬ÖÃÎª¡¸ÒÑÕ¹Ê¾¡¹
 		this.adBanner?.hide();
 		if (!this.adState) {
-			// ä»æœªå±•ç¤ºè¿‡ï¼Œç°åœ¨è®°å½•ä¸€æ¬¡ï¼ˆä¸‹æ¬¡ä¸å†å¼¹ï¼‰
+			// ´ÓÎ´Õ¹Ê¾¹ı£¬ÏÖÔÚ¼ÇÂ¼Ò»´Î£¨ÏÂ´Î²»ÔÙµ¯£©
 			this.adState = markAdShown(this.adState);
 		}
 		await this.saveSettings();
 	}
 
-	// ---------- å¹¿å‘Šæ¨ªå¹… ----------
-	/** æŒ‰éœ€å±•ç¤ºå¹¿å‘Šæ¨ªå¹…ï¼šVIP â†’ ä¸å¼¹ï¼›é VIP ä¸” 24h å†…å·²å±•ç¤º â†’ ä¸å¼¹ */
+	// ---------- ¹ã¸æºá·ù ----------
+	/** °´ĞèÕ¹Ê¾¹ã¸æºá·ù£ºVIP ¡ú ²»µ¯£»·Ç VIP ÇÒ 24h ÄÚÒÑÕ¹Ê¾ ¡ú ²»µ¯ */
 	private async showAdIfNeeded(): Promise<void> {
 		const active = this.vipState?.active === true;
 		if (!shouldShowAd(active, this.adState)) return;
@@ -421,7 +421,7 @@ export default class CodeConverter extends Plugin {
 		}
 	}
 
-	// ---------- è‡ªè§¦å‘ä¿æŠ¤ ----------
+	// ---------- ×Ô´¥·¢±£»¤ ----------
 	private markSelfWritten(path: string): void {
 		this.selfWritten.set(path, Date.now());
 	}
@@ -436,11 +436,11 @@ export default class CodeConverter extends Plugin {
 		return true;
 	}
 
-	// ---------- è‡ªåŠ¨æ£€æµ‹ï¼ˆå—è®¾ç½®ä¸é˜²å›ç¯åŒé‡ä¿æŠ¤ï¼‰ ----------
+	// ---------- ×Ô¶¯¼ì²â£¨ÊÜÉèÖÃÓë·À»Ø»·Ë«ÖØ±£»¤£© ----------
 	private async handleAutoDetect(file: TFile): Promise<void> {
 		if (!this.settings.autoConvertOnImport) return;
-		if (this.isSelfWritten(file.path)) return; // æ’ä»¶è‡ªå·±å†™çš„ï¼Œè·³è¿‡
-		if (this.inFlight.has(file.path)) return; // å·²åœ¨è½¬æ¢ä¸­ï¼Œå»é‡
+		if (this.isSelfWritten(file.path)) return; // ²å¼ş×Ô¼ºĞ´µÄ£¬Ìø¹ı
+		if (this.inFlight.has(file.path)) return; // ÒÑÔÚ×ª»»ÖĞ£¬È¥ÖØ
 		this.inFlight.add(file.path);
 		try {
 			await this.doAutoDetect(file);
@@ -455,12 +455,12 @@ export default class CodeConverter extends Plugin {
 		const det = detectEncoding(bytes, this.settings.confidenceThreshold);
 
 		if (det.isUtf8) {
-			// æœ¬æ¥å°±æ˜¯ UTF-8ï¼Œæ— äº‹å¯åšï¼›ä½†è‹¥ U+FFFD è¶…æ ‡ï¼Œæç¤º"ä¸Šæ¸¸å·²æŸå"
+			// ±¾À´¾ÍÊÇ UTF-8£¬ÎŞÊÂ¿É×ö£»µ«Èô U+FFFD ³¬±ê£¬ÌáÊ¾"ÉÏÓÎÒÑËğ»µ"
 			this.warnIfDamagedUtf8(file, bytes);
 			return;
 		}
 
-		// é UTF-8ï¼šé«˜ç½®ä¿¡åº¦æ‰é™é»˜è½¬ï¼Œä½ç½®ä¿¡åº¦åªæŠ¥å‘Š
+		// ·Ç UTF-8£º¸ßÖÃĞÅ¶È²Å¾²Ä¬×ª£¬µÍÖÃĞÅ¶ÈÖ»±¨¸æ
 		if (det.needsManualConfirm) {
 			new Notice(
 				`${PLUGIN_NAME}: ${file.path} ${t("notice.lowConfidence", {
@@ -471,7 +471,7 @@ export default class CodeConverter extends Plugin {
 			return;
 		}
 
-		// é«˜ç½®ä¿¡åº¦ â†’ è‡ªåŠ¨è½¬æ¢ï¼ˆä»å¸¦å¤‡ä»½ï¼‰
+		// ¸ßÖÃĞÅ¶È ¡ú ×Ô¶¯×ª»»£¨ÈÔ´ø±¸·İ£©
 		try {
 			const r = await convertFileToUtf8(this.app.vault, file, this.settings, true);
 			this.track(r.record);
@@ -482,20 +482,20 @@ export default class CodeConverter extends Plugin {
 		}
 	}
 
-	// ---------- æ‰‹åŠ¨å‘½ä»¤ ----------
+	// ---------- ÊÖ¶¯ÃüÁî ----------
 	private getActiveFile(): TFile | null {
-		// Obsidian æ ‡å‡† APIï¼šç›´æ¥å–æ´»åŠ¨æ–‡ä»¶
+		// Obsidian ±ê×¼ API£ºÖ±½ÓÈ¡»î¶¯ÎÄ¼ş
 		return this.app.workspace.getActiveFile() ?? null;
 	}
 
-	/** è®°å½•ä¸€æ¡è½¬æ¢åˆ°å†…å­˜ï¼ˆä¾›å¯¼å‡ºï¼‰ */
+	/** ¼ÇÂ¼Ò»Ìõ×ª»»µ½ÄÚ´æ£¨¹©µ¼³ö£© */
 	private track(record: ConversionRecord | undefined): void {
 		if (record) this.records.push(record);
 	}
 
 	/**
-	 * è®°å½•ä¸€æ¬¡å¤±è´¥ï¼šå†…å­˜ + æ§åˆ¶å° + æ—¥å¿—æ–‡ä»¶ï¼ˆJSONLï¼‰ã€‚
-	 * å¤±è´¥é€šçŸ¥è½¬ç¬å³é€ï¼Œè½ç›˜åå¯ç”¨"å¯¼å‡ºè½¬æ¢æ—¥å¿—"äº‹åæ’æŸ¥ã€‚
+	 * ¼ÇÂ¼Ò»´ÎÊ§°Ü£ºÄÚ´æ + ¿ØÖÆÌ¨ + ÈÕÖ¾ÎÄ¼ş£¨JSONL£©¡£
+	 * Ê§°ÜÍ¨Öª×ªË²¼´ÊÅ£¬ÂäÅÌºó¿ÉÓÃ"µ¼³ö×ª»»ÈÕÖ¾"ÊÂºóÅÅ²é¡£
 	 */
 	private trackFailure(path: string, e: unknown): void {
 		const rec = makeFailureRecord(
@@ -510,9 +510,9 @@ export default class CodeConverter extends Plugin {
 	}
 
 	/**
-	 * ä¸Šæ¸¸æŸåè­¦å‘Šï¼šæ–‡ä»¶æ˜¯åˆæ³• UTF-8ï¼Œä½† U+FFFD æ›¿æ¢å­—ç¬¦å æ¯”è¾¾åˆ°é˜ˆå€¼ã€‚
-	 * è¿™ç§æ–‡ä»¶ç¼–ç è½¬æ¢æ— æ³•ä¿®å¤ï¼ˆåŸå§‹å­—èŠ‚å·²ä¸¢å¤±ï¼‰ï¼Œé¡»æ˜ç¡®å‘ŠçŸ¥ç”¨æˆ·åŸå› ã€‚
-	 * @returns true = å·²å¼¹å‡ºæŸåè­¦å‘Š
+	 * ÉÏÓÎËğ»µ¾¯¸æ£ºÎÄ¼şÊÇºÏ·¨ UTF-8£¬µ« U+FFFD Ìæ»»×Ö·ûÕ¼±È´ïµ½ãĞÖµ¡£
+	 * ÕâÖÖÎÄ¼ş±àÂë×ª»»ÎŞ·¨ĞŞ¸´£¨Ô­Ê¼×Ö½ÚÒÑ¶ªÊ§£©£¬ĞëÃ÷È·¸æÖªÓÃ»§Ô­Òò¡£
+	 * @returns true = ÒÑµ¯³öËğ»µ¾¯¸æ
 	 */
 	private warnIfDamagedUtf8(file: TFile, bytes: Uint8Array): boolean {
 		const damage = analyzeReplacementDamage(bytes);
@@ -527,7 +527,7 @@ export default class CodeConverter extends Plugin {
 		return true;
 	}
 
-	/** å¯¼å‡ºè½¬æ¢æ—¥å¿—ï¼ˆJSON / Markdownï¼‰ */
+	/** µ¼³ö×ª»»ÈÕÖ¾£¨JSON / Markdown£© */
 	private async exportLog(format: "json" | "markdown"): Promise<void> {
 		if (!this.records.length) {
 			new Notice(`${PLUGIN_NAME}: ${t("notice.logEmpty")}`);
@@ -547,14 +547,14 @@ export default class CodeConverter extends Plugin {
 		const det = detectEncoding(bytes, this.settings.confidenceThreshold);
 
 		if (det.isUtf8) {
-			// U+FFFD è¶…æ ‡ â†’ æ˜ç¡®å‘ŠçŸ¥"ä¸ºä»€ä¹ˆä¸èƒ½è½¬"ï¼›å¦åˆ™å¸¸è§„æç¤º
+			// U+FFFD ³¬±ê ¡ú Ã÷È·¸æÖª"ÎªÊ²Ã´²»ÄÜ×ª"£»·ñÔò³£¹æÌáÊ¾
 			if (!this.warnIfDamagedUtf8(file, bytes)) {
 				new Notice(`${PLUGIN_NAME}: ${file.path} ${t("notice.alreadyUtf8")}`);
 			}
 			return;
 		}
 
-		// ä½ç½®ä¿¡åº¦ â†’ å¼¹ç¡®è®¤æ¡†ï¼›é«˜ç½®ä¿¡åº¦ â†’ ç›´æ¥è½¬
+		// µÍÖÃĞÅ¶È ¡ú µ¯È·ÈÏ¿ò£»¸ßÖÃĞÅ¶È ¡ú Ö±½Ó×ª
 		if (det.needsManualConfirm) {
 			new EncodingConfirmModal(this.app, file, this.app.vault, this.settings, async (force) => {
 				try {
@@ -580,8 +580,8 @@ export default class CodeConverter extends Plugin {
 	}
 
 	/**
-	 * è‡ªåŠ¨è½¬æ¢ä¸ã€Œè½¬æ¢å½“å‰æ–‡ä»¶å¤¹ã€å…±ç”¨çš„é—¸é—¨ï¼šæ‰©å±•åæ˜¯å¦åœ¨ç™½åå•é‡Œã€‚
-	 * æ‰‹åŠ¨ã€Œè½¬æ¢å½“å‰æ–‡ä»¶ã€æ•…æ„ä¸ç»è¿‡å®ƒâ€”â€”ç”¨æˆ·å·²ç»æ˜ç¡®æŒ‡å®šäº†ç›®æ ‡æ–‡ä»¶ã€‚
+	 * ×Ô¶¯×ª»»Óë¡¸×ª»»µ±Ç°ÎÄ¼ş¼Ğ¡¹¹²ÓÃµÄÕ¢ÃÅ£ºÀ©Õ¹ÃûÊÇ·ñÔÚ°×Ãûµ¥Àï¡£
+	 * ÊÖ¶¯¡¸×ª»»µ±Ç°ÎÄ¼ş¡¹¹ÊÒâ²»¾­¹ıËü¡ª¡ªÓÃ»§ÒÑ¾­Ã÷È·Ö¸¶¨ÁËÄ¿±êÎÄ¼ş¡£
 	 */
 	private isConvertibleFile(f: TFile): boolean {
 		return isTextExtension(f.extension, parseExtensions(this.settings.textExtensions));
@@ -589,16 +589,16 @@ export default class CodeConverter extends Plugin {
 
 	private async convertCurrentFolder(): Promise<void> {
 		const file = this.getActiveFile();
-		// ç›®æ ‡ç›®å½• = æ´»åŠ¨æ–‡ä»¶æ‰€åœ¨ç›®å½•ï¼›æ— æ´»åŠ¨æ–‡ä»¶ = æ•´ä¸ª vaultã€‚
-		// âš ï¸ ä¸èƒ½ç”¨ getAbstractFileByPath("")â€”â€”æ ¹è·¯å¾„æ˜¯ "/"ï¼Œä¼  "" æ°¸è¿œè¿”å› nullï¼Œ
-		// æ—§å†™æ³•å¯¼è‡´"æ— æ´»åŠ¨æ–‡ä»¶æ—¶æ‰«ææ•´ä¸ª vault"é™é»˜å¤±æ•ˆï¼›
-		// æ´»åŠ¨æ–‡ä»¶åœ¨ vault æ ¹æ—¶ path.replace(/\/[^/]+$/,"") ä¹Ÿä¸å‰¥æ–‡ä»¶åï¼Œroot ä¼šå˜æˆ TFileã€‚
-		// æ­£ç¡®åšæ³•ï¼šTFile.parentï¼ˆTFolderï¼Œd.ts:6957ï¼‰å–çˆ¶ç›®å½•è·¯å¾„ã€‚
+		// Ä¿±êÄ¿Â¼ = »î¶¯ÎÄ¼şËùÔÚÄ¿Â¼£»ÎŞ»î¶¯ÎÄ¼ş = Õû¸ö vault¡£
+		// ?? ²»ÄÜÓÃ getAbstractFileByPath("")¡ª¡ª¸ùÂ·¾¶ÊÇ "/"£¬´« "" ÓÀÔ¶·µ»Ø null£¬
+		// ¾ÉĞ´·¨µ¼ÖÂ"ÎŞ»î¶¯ÎÄ¼şÊ±É¨ÃèÕû¸ö vault"¾²Ä¬Ê§Ğ§£»
+		// »î¶¯ÎÄ¼şÔÚ vault ¸ùÊ± path.replace(/\/[^/]+$/,"") Ò²²»°şÎÄ¼şÃû£¬root »á±ä³É TFile¡£
+		// ÕıÈ·×ö·¨£ºTFile.parent£¨TFolder£¬d.ts:6957£©È¡¸¸Ä¿Â¼Â·¾¶¡£
 		const parentPath = file?.parent?.path ?? "";
 		const rootPath = !parentPath || parentPath === "/" ? "" : parentPath;
 
-		// ç™½åå•ï¼šgetMarkdownFiles() ä¼šæŠŠèŒƒå›´ç„Šæ­»åœ¨ md ä¸Šï¼Œæ¢ getFiles() æ‰å—è®¾ç½®æ§åˆ¶ã€‚
-		// äºŒè¿›åˆ¶é»‘åå•åœ¨ convertFileToUtf8 é‡Œå…œåº•ï¼Œè¿™é‡Œä¸é‡å¤åˆ¤ã€‚
+		// °×Ãûµ¥£ºgetMarkdownFiles() »á°Ñ·¶Î§º¸ËÀÔÚ md ÉÏ£¬»» getFiles() ²ÅÊÜÉèÖÃ¿ØÖÆ¡£
+		// ¶ş½øÖÆºÚÃûµ¥ÔÚ convertFileToUtf8 Àï¶µµ×£¬ÕâÀï²»ÖØ¸´ÅĞ¡£
 		const extensions = parseExtensions(this.settings.textExtensions);
 		const allFiles = this.app.vault.getFiles();
 		const targets = allFiles.filter(
@@ -607,16 +607,16 @@ export default class CodeConverter extends Plugin {
 				(!rootPath || f.path.startsWith(rootPath + "/"))
 		);
 
-		// force=falseï¼šä½ç½®ä¿¡åº¦æ–‡ä»¶è·³è¿‡è€Œéå¼ºè½¬â€”â€”ä¸ README å®‰å…¨è®¾è®¡ä¸€è‡´
-		// ï¼ˆ"ä½ç½®ä¿¡åº¦åªæŠ¥å‘Šä¸é™é»˜å¼ºè½¬"ï¼‰ï¼›è·³è¿‡åŸå› è¿›æ§åˆ¶å°ä¾›æ’æŸ¥ã€‚
+		// force=false£ºµÍÖÃĞÅ¶ÈÎÄ¼şÌø¹ı¶ø·ÇÇ¿×ª¡ª¡ªÓë README °²È«Éè¼ÆÒ»ÖÂ
+		// £¨"µÍÖÃĞÅ¶ÈÖ»±¨¸æ²»¾²Ä¬Ç¿×ª"£©£»Ìø¹ıÔ­Òò½ø¿ØÖÆÌ¨¹©ÅÅ²é¡£
 		const r = await convertFilesToUtf8(this.app.vault, targets, this.settings, false);
-		// æ‰¹é‡è½¬æ¢è®°å½•ä¹Ÿè¿›å†…å­˜ï¼ˆä¾›å¯¼å‡ºï¼‰
+		// ÅúÁ¿×ª»»¼ÇÂ¼Ò²½øÄÚ´æ£¨¹©µ¼³ö£©
 		for (const rec of r.records) this.records.push(rec);
 		if (r.skippedList.length) {
 			console.warn("[code-converter] skipped (low confidence etc.):", r.skippedList);
 		}
 		if (r.failed.length) {
-			// å¤±è´¥é¡¹é€æ¡è½ç›˜ï¼ˆå†…å­˜ + æ§åˆ¶å° + æ—¥å¿—æ–‡ä»¶ï¼‰ï¼Œé€šçŸ¥æ¶ˆå¤±åä»å¯å¯¼å‡ºæ’æŸ¥
+			// Ê§°ÜÏîÖğÌõÂäÅÌ£¨ÄÚ´æ + ¿ØÖÆÌ¨ + ÈÕÖ¾ÎÄ¼ş£©£¬Í¨ÖªÏûÊ§ºóÈÔ¿Éµ¼³öÅÅ²é
 			for (const fail of r.failed) {
 				this.trackFailure(fail.path, new Error(fail.error));
 			}
@@ -625,7 +625,7 @@ export default class CodeConverter extends Plugin {
 					c: r.converted, s: r.skipped, f: r.failed.length
 				})}`
 			);
-			// æ§åˆ¶å°åˆ—å‡ºå¤±è´¥é¡¹
+			// ¿ØÖÆÌ¨ÁĞ³öÊ§°ÜÏî
 			console.warn("[code-converter] failures:", r.failed);
 		} else {
 			new Notice(
@@ -634,7 +634,7 @@ export default class CodeConverter extends Plugin {
 				})}`
 			);
 		}
-		// ç–‘ä¼¼ä¸Šæ¸¸æŸåï¼ˆåˆæ³• UTF-8 ä½† U+FFFD è¶…æ ‡ï¼‰çš„æ–‡ä»¶å•ç‹¬æç¤º
+		// ÒÉËÆÉÏÓÎËğ»µ£¨ºÏ·¨ UTF-8 µ« U+FFFD ³¬±ê£©µÄÎÄ¼şµ¥¶ÀÌáÊ¾
 		if (r.damaged.length) {
 			new Notice(
 				`${PLUGIN_NAME}: ${t("notice.folderDamaged", { n: r.damaged.length })}`,
@@ -645,8 +645,8 @@ export default class CodeConverter extends Plugin {
 	}
 
 	/**
-	 * ä¹±ç ä¿®å¤ï¼šæ£€æµ‹å¹¶ä¿®å¤"äºŒæ¬¡ç¼–ç "ä¹±ç ï¼ˆåˆæ³• UTF-8 ä½†å†…å®¹å†å²ä¸Šè¢«é”™è¯¯è§£ç å›å­˜ï¼‰ã€‚
-	 * å®‰å…¨é˜€ï¼šå¿…é¡»åˆæ³• UTF-8 æ‰è¿›å…¥ï¼›ä¿®å¤æ°¸è¿œç»ç¡®è®¤å¼¹çª—ï¼›å†™å›å‰å¤‡ä»½ï¼›è¿›æ—¥å¿—ã€‚
+	 * ÂÒÂëĞŞ¸´£º¼ì²â²¢ĞŞ¸´"¶ş´Î±àÂë"ÂÒÂë£¨ºÏ·¨ UTF-8 µ«ÄÚÈİÀúÊ·ÉÏ±»´íÎó½âÂë»Ø´æ£©¡£
+	 * °²È«·§£º±ØĞëºÏ·¨ UTF-8 ²Å½øÈë£»ĞŞ¸´ÓÀÔ¶¾­È·ÈÏµ¯´°£»Ğ´»ØÇ°±¸·İ£»½øÈÕÖ¾¡£
 	 */
 	private async repairCurrentFile(): Promise<void> {
 		const file = this.getActiveFile();
@@ -726,9 +726,9 @@ export default class CodeConverter extends Plugin {
 		const det = detectEncoding(bytes, this.settings.confidenceThreshold);
 		const preview = det.isUtf8
 			? ""
-			: decodeWithEncoding(bytes, det.encoding).slice(0, 120).replace(/\n/g, " â ");
+			: decodeWithEncoding(bytes, det.encoding).slice(0, 120).replace(/\n/g, " ? ");
 
-		// æŸååˆ†æï¼šåˆæ³• UTF-8 ä½† U+FFFD è¶…æ ‡ â†’ åœ¨æŠ¥å‘Šä¸­é™„åŠ è¯´æ˜
+		// Ëğ»µ·ÖÎö£ººÏ·¨ UTF-8 µ« U+FFFD ³¬±ê ¡ú ÔÚ±¨¸æÖĞ¸½¼ÓËµÃ÷
 		let damageInfo = "";
 		if (det.isUtf8) {
 			const damage = analyzeReplacementDamage(bytes);

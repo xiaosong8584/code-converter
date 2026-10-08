@@ -1,8 +1,9 @@
-/* Code Converter â€” æ’ä»¶æ ·å¼è¡¨ï¼ˆå¯¹åº” sample-plugin çš„ styles.cssï¼‰ */
-/* ä¸ src/main.ts ä¸­åŸæœ¬çš„ const CSS å¸¸é‡åŒæºï¼›æœ¬æ–‡ä»¶ç”± release.mjs æ‰“åŒ…è¿› dist/ï¼Œ
-   Obsidian åŠ è½½æ’ä»¶æ—¶ä¼šè‡ªåŠ¨ applyStylesheet åŠ è½½å®ƒã€‚ */
+/* Code Converter ¡ª ²å¼şÑùÊ½±í£¨¶ÔÓ¦ sample-plugin µÄ styles.css£© */
+/* Óë src/main.ts ÖĞÔ­±¾µÄ const CSS ³£Á¿Í¬Ô´£»±¾ÎÄ¼şÓÉ release.mjs ´ò°ü½ø dist/£¬
+   Obsidian ¼ÓÔØ²å¼şÊ±»á×Ô¶¯ applyStylesheet ¼ÓÔØËü¡£ */
 
 .cc-backup-dir { max-width: 260px; }
+.cc-vip-code-input { max-width: 440px; }
 
 .cc-preview {
 	max-height: 200px;
@@ -27,7 +28,7 @@
 	border: none;
 }
 
-/* RTLï¼šæ–‡å­—/é—´è·/ç®­å¤´éšæ–¹å‘ç¿»è½¬ */
+/* RTL£ºÎÄ×Ö/¼ä¾à/¼ıÍ·Ëæ·½Ïò·­×ª */
 [dir="rtl"] .cc-file-row,
 [dir="rtl"] .cc-detected,
 [dir="rtl"] .cc-preview {
@@ -35,7 +36,7 @@
 	text-align: right;
 }
 
-/* é£é™©ç¡®è®¤å¼¹çª—ï¼šæ­£æ–‡é€æ¡åˆ—å‡ºï¼Œæ— å¤‡ä»½æ—¶å•ç‹¬é«˜äº® */
+/* ·çÏÕÈ·ÈÏµ¯´°£ºÕıÎÄÖğÌõÁĞ³ö£¬ÎŞ±¸·İÊ±µ¥¶À¸ßÁÁ */
 .cc-risk-line {
 	margin: 6px 0;
 	line-height: 1.5;
@@ -56,7 +57,7 @@
 	text-align: right;
 }
 
-/* å¹¿å‘Šæ¨ªå¹…ï¼ˆæ”¯æŒä½œè€…æ¡ï¼‰ï¼šåº•éƒ¨å›ºå®šï¼Œé€æ˜è¿‡æ¸¡æ˜¾éš */
+/* ¹ã¸æºá·ù£¨Ö§³Ö×÷ÕßÌõ£©£ºµ×²¿¹Ì¶¨£¬Í¸Ã÷¹ı¶ÉÏÔÒş */
 .cc-ad-banner {
 	position: fixed;
 	bottom: 12px;

@@ -1,9 +1,9 @@
 /**
- * VIP æ¿€æ´»å¼¹çª—ã€‚
+ * VIP ¼¤»îµ¯´°¡£
  *
- * ç‚¹å‡»è®¾ç½®é¢æ¿çš„ã€Œæ¿€æ´» VIPã€æŒ‰é’®æ‰“å¼€ï¼Œç”¨æˆ·è¾“å…¥æ¿€æ´»ç åç‚¹ã€Œæ¿€æ´»ã€ã€‚
- * é€šç”¨ç æœ‰æ•ˆæœŸå†…ä»»æ„è®¾å¤‡å¯ç”¨ï¼›ä¸“ç”¨ç ç»‘å®šå½“å‰è®¾å¤‡ï¼Œæ°¸ä¸è¿‡æœŸã€‚
- * æ¿€æ´»æˆåŠŸåå›è°ƒ plugin.activateVip() é“¸é€ å®Œæ•´æ€§æŒ‡çº¹ï¼ˆè§ vip/seal.tsï¼‰ã€‚
+ * µã»÷ÉèÖÃÃæ°åµÄ¡¸¼¤»î VIP¡¹°´Å¥´ò¿ª£¬ÓÃ»§ÊäÈë¼¤»îÂëºóµã¡¸¼¤»î¡¹¡£
+ * Í¨ÓÃÂëÓĞĞ§ÆÚÄÚÈÎÒâÉè±¸¿ÉÓÃ£»×¨ÓÃÂë°ó¶¨µ±Ç°Éè±¸£¬ÓÀ²»¹ıÆÚ¡£
+ * ¼¤»î³É¹¦ºó»Øµ÷ plugin.activateVip() ÖıÔìÍêÕûĞÔÖ¸ÎÆ£¨¼û vip/seal.ts£©¡£
  */
 
 import { App, Modal, Notice, Setting } from "obsidian";
@@ -15,7 +15,7 @@ export class VipActivationModal extends Modal {
 	constructor(
 		app: App,
 		private plugin: CodeConverter,
-		/** æ¿€æ´»æˆåŠŸåçš„å›è°ƒï¼ˆSettingsTab ç”¨æ¥åˆ·æ–°è‡ªèº«ï¼Œè®© VIP çŠ¶æ€ç«‹åˆ»å‡ºç°ï¼‰ */
+		/** ¼¤»î³É¹¦ºóµÄ»Øµ÷£¨SettingsTab ÓÃÀ´Ë¢ĞÂ×ÔÉí£¬ÈÃ VIP ×´Ì¬Á¢¿Ì³öÏÖ£© */
 		private onActivated?: () => void
 	) {
 		super(app);
@@ -34,11 +34,11 @@ export class VipActivationModal extends Modal {
 		new Setting(contentEl)
 			.setName(t("vip.modal.codeName"))
 			.addText((txt) => {
-				txt.setPlaceholder("VIPU0002-XXXXXXXX-XXXXXXXX-â€¦").onChange((v) => {
+				txt.setPlaceholder("VIPU0002-XXXXXXXX-XXXXXXXX-¡­").onChange((v) => {
 					code = v;
 				});
-				// æ¿€æ´»ç  143 å­—ç¬¦ï¼Œé»˜è®¤å®½åº¦ä¼šæŠ˜è¡Œï¼›åŠ å®½åˆ°èƒ½æ•´è¡Œæ˜¾ç¤º
-				txt.inputEl.style.width = "440px";
+				// ¼¤»îÂë 143 ×Ö·û£¬Ä¬ÈÏ¿í¶È»áÕÛĞĞ£»¼Ó¿íµ½ÄÜÕûĞĞÏÔÊ¾
+			txt.inputEl.addClass("cc-vip-code-input");
 			});
 
 		const btnRow = contentEl.createDiv({ cls: "cc-btn-row" });
@@ -49,9 +49,9 @@ export class VipActivationModal extends Modal {
 				new Notice(`[Code Converter] ${t("vip.notice.enterCode")}`);
 				return;
 			}
-			// Ed25519 éœ€ Chromium 113+ï¼ˆObsidian â‰¥ 1.5.8ï¼‰ã€‚è€ç‰ˆæœ¬ä¸Šæ¿€æ´»å¿…ç„¶å¤±è´¥ï¼Œ
-			// ä¸å…¶è®©ç”¨æˆ·æ‹¿åˆ°ã€Œæ¿€æ´»ç æ— æ•ˆã€è¿™ç§æ— è§£æç¤ºï¼Œä¸å¦‚æ˜ç¡®å‘ŠçŸ¥è¦å‡çº§ Obsidianã€‚
-			// æ”¾åœ¨è¿™é‡Œï¼ˆè€Œé onOpenï¼‰æ˜¯ä¸ºäº†é¿å…æ¢æµ‹ç»“æœä¸ç‚¹å‡»ä¹‹é—´äº§ç”Ÿç«æ€ã€‚
+			// Ed25519 Ğè Chromium 113+£¨Obsidian ¡İ 1.5.8£©¡£ÀÏ°æ±¾ÉÏ¼¤»î±ØÈ»Ê§°Ü£¬
+			// ÓëÆäÈÃÓÃ»§ÄÃµ½¡¸¼¤»îÂëÎŞĞ§¡¹ÕâÖÖÎŞ½âÌáÊ¾£¬²»ÈçÃ÷È·¸æÖªÒªÉı¼¶ Obsidian¡£
+			// ·ÅÔÚÕâÀï£¨¶ø·Ç onOpen£©ÊÇÎªÁË±ÜÃâÌ½²â½á¹ûÓëµã»÷Ö®¼ä²úÉú¾ºÌ¬¡£
 			if (!(await isEd25519Available())) {
 				new Notice(`[Code Converter] ${t("vip.notice.unsupported")}`, 6000);
 				return;
@@ -61,7 +61,7 @@ export class VipActivationModal extends Modal {
 				new Notice(`[Code Converter] ${t("vip.notice.invalid")}`, 5000);
 				return;
 			}
-			// æ¿€æ´» = é“¸é€ é¦–ä»½å®Œæ•´æ€§æŒ‡çº¹ï¼ˆplugin å†…è´Ÿè´£ä¿ç•™å†å²æ—¶é—´é«˜æ°´ä½ï¼‰
+			// ¼¤»î = ÖıÔìÊ×·İÍêÕûĞÔÖ¸ÎÆ£¨plugin ÄÚ¸ºÔğ±£ÁôÀúÊ·Ê±¼ä¸ßË®Î»£©
 			await this.plugin.activateVip(state, code);
 			new Notice(`[Code Converter] ${t("vip.notice.success")}`, 3000);
 			this.close();

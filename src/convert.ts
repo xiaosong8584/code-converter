@@ -1,9 +1,9 @@
 /**
- * è½¬æ¢ç¼–æŽ’ï¼šæŽ¢æµ‹ â†’ å¤‡ä»½ â†’ è§£ç  â†’ åŽ»/å†™ BOM â†’ å†™å›ž UTF-8ã€‚
- * è¿™æ˜¯æ’ä»¶çš„"å®‰å…¨æ ¸å¿ƒ"ï¼Œæ‰€æœ‰è½¬æ¢éƒ½èµ°è¿™é‡Œï¼Œç»Ÿä¸€ä¿è¯å…ˆå¤‡ä»½å†æ”¹ã€‚
+ * ×ª»»±àÅÅ£ºÌ½²â ¡ú ±¸·Ý ¡ú ½âÂë ¡ú È¥/Ð´ BOM ¡ú Ð´»Ø UTF-8¡£
+ * ÕâÊÇ²å¼þµÄ"°²È«ºËÐÄ"£¬ËùÓÐ×ª»»¶¼×ßÕâÀï£¬Í³Ò»±£Ö¤ÏÈ±¸·ÝÔÙ¸Ä¡£
  */
 
-import { Notice, TFile, Vault } from "obsidian";
+import { TFile, Vault } from "obsidian";
 import { detectEncoding, decodeWithEncoding, analyzeReplacementDamage } from "./encoding";
 import { backupFile, makeRecord, logConversion, notifyBackup, notifyConverted } from "./backup";
 import { CodeConverterSettings, ConversionRecord } from "./types";
@@ -15,11 +15,11 @@ export interface ConvertResult {
 	skipped: boolean;
 	record?: ConversionRecord;
 	message?: string;
-	/** åˆæ³• UTF-8 ä½† U+FFFD è¶…æ ‡æ—¶çš„æŸååˆ†æžï¼ˆä»… isUtf8 åˆ†æ”¯è¿”å›žï¼‰ */
+	/** ºÏ·¨ UTF-8 µ« U+FFFD ³¬±êÊ±µÄËð»µ·ÖÎö£¨½ö isUtf8 ·ÖÖ§·µ»Ø£© */
 	damage?: { count: number; total: number; ratio: number };
 }
 
-/** åˆ¤æ–­æŸåå æ¯”æ˜¯å¦è¾¾åˆ°è­¦å‘Šé˜ˆå€¼ï¼ˆ0 = å…³é—­ï¼‰ */
+/** ÅÐ¶ÏËð»µÕ¼±ÈÊÇ·ñ´ïµ½¾¯¸æãÐÖµ£¨0 = ¹Ø±Õ£© */
 export function isDamageOverThreshold(
 	settings: CodeConverterSettings,
 	ratio: number
@@ -27,7 +27,7 @@ export function isDamageOverThreshold(
 	return settings.damageWarnRatio > 0 && ratio * 100 >= settings.damageWarnRatio;
 }
 
-/** æŠŠä¸€ä¸ª TFile è½¬æˆ UTF-8 */
+/** °ÑÒ»¸ö TFile ×ª³É UTF-8 */
 export async function convertFileToUtf8(
 	vault: Vault,
 	file: TFile,
@@ -37,8 +37,8 @@ export async function convertFileToUtf8(
 	const relPath = file.path;
 	const bytes: Uint8Array = new Uint8Array(await vault.readBinary(file));
 
-	// äºŒè¿›åˆ¶æ‹¦æˆªï¼šæ‰©å±•åå‘½ä¸­é»‘åå•æˆ–å‰ 8KB å« NUL å³æ‹’ç»ã€‚
-	// æ”¾åœ¨æŽ¢æµ‹ä¹‹å‰â€”â€”æŠŠäºŒè¿›åˆ¶å½“æ–‡æœ¬è§£ç å†å†™å›žæ˜¯ä¸å¯é€†æŸåï¼Œè¶Šæ—©æ‹¦ä¸‹è¶Šä¾¿å®œã€‚
+	// ¶þ½øÖÆÀ¹½Ø£ºÀ©Õ¹ÃûÃüÖÐºÚÃûµ¥»òÇ° 8KB º¬ NUL ¼´¾Ü¾ø¡£
+	// ·ÅÔÚÌ½²âÖ®Ç°¡ª¡ª°Ñ¶þ½øÖÆµ±ÎÄ±¾½âÂëÔÙÐ´»ØÊÇ²»¿ÉÄæËð»µ£¬Ô½ÔçÀ¹ÏÂÔ½±ãÒË¡£
 	if (isBinaryFile(file.extension, bytes)) {
 		return {
 			converted: false,
@@ -49,7 +49,7 @@ export async function convertFileToUtf8(
 
 	const result = detectEncoding(bytes, settings.confidenceThreshold);
 
-	// å·²ç»æ˜¯ UTF-8ï¼šæ— éœ€è½¬æ¢ï¼›ä½†è‹¥ U+FFFD è¶…æ ‡ï¼Œé™„å¸¦æŸååˆ†æžä¾›ä¸Šå±‚å‘Šè­¦
+	// ÒÑ¾­ÊÇ UTF-8£ºÎÞÐè×ª»»£»µ«Èô U+FFFD ³¬±ê£¬¸½´øËð»µ·ÖÎö¹©ÉÏ²ã¸æ¾¯
 	if (result.isUtf8) {
 		const damage = analyzeReplacementDamage(bytes);
 		return {
@@ -60,7 +60,7 @@ export async function convertFileToUtf8(
 		};
 	}
 
-	// éž UTF-8ï¼šä½Žç½®ä¿¡åº¦ä¸”éžå¼ºåˆ¶ â†’ éœ€è¦äººå·¥ç¡®è®¤
+	// ·Ç UTF-8£ºµÍÖÃÐÅ¶ÈÇÒ·ÇÇ¿ÖÆ ¡ú ÐèÒªÈË¹¤È·ÈÏ
 	if (!force && result.needsManualConfirm) {
 		return {
 			converted: false,
@@ -68,7 +68,7 @@ export async function convertFileToUtf8(
 			message: `${relPath}: ${t("notice.lowConfidence", {
 				enc: result.encoding,
 				n: result.confidence
-			})}ï¼ˆé˜ˆå€¼ ${settings.confidenceThreshold}%ï¼‰`
+			})}£¨ãÐÖµ ${settings.confidenceThreshold}%£©`
 		};
 	}
 
@@ -78,24 +78,24 @@ export async function convertFileToUtf8(
 		notifyBackup(backupPath);
 	}
 
-	// è§£ç åˆ°å­—ç¬¦ä¸²
+	// ½âÂëµ½×Ö·û´®
 	let text = decodeWithEncoding(bytes, result.encoding);
 
-	// æŒ‰é…ç½®åŽ»é™¤ UTF-8 BOM
+	// °´ÅäÖÃÈ¥³ý UTF-8 BOM
 	if (settings.stripBomOnConvert) {
 		if (text.charCodeAt(0) === 0xFEFF) {
 			text = text.slice(1);
 		}
 	}
 
-	// æŒ‰é…ç½®å†™å…¥ UTF-8 BOMã€‚å…ˆåŽ»å†åŠ ï¼Œä¿è¯æœ€ç»ˆæ°å¥½ä¸€ä¸ª BOMï¼Œä¸ä¼šå æˆä¸¤ä¸ªã€‚
-	// ç”¨é€”ï¼šMSVC åœ¨æºæ–‡ä»¶æ—  BOM æ—¶æŒ‰ç³»ç»Ÿä»£ç é¡µè¯»å–ï¼ŒC++ é¡¹ç›®è½¬æˆæ—  BOM UTF-8
-	// åŽä¸­æ–‡ä¼šå†æ¬¡ä¹±ç ï¼›gcc/clang ä¼šè‡ªåŠ¨è·³è¿‡ BOMï¼Œå¼€å¯æ­¤é€‰é¡¹å¯¹å®ƒä»¬æ˜¯å®‰å…¨çš„ã€‚
+	// °´ÅäÖÃÐ´Èë UTF-8 BOM¡£ÏÈÈ¥ÔÙ¼Ó£¬±£Ö¤×îÖÕÇ¡ºÃÒ»¸ö BOM£¬²»»áµþ³ÉÁ½¸ö¡£
+	// ÓÃÍ¾£ºMSVC ÔÚÔ´ÎÄ¼þÎÞ BOM Ê±°´ÏµÍ³´úÂëÒ³¶ÁÈ¡£¬C++ ÏîÄ¿×ª³ÉÎÞ BOM UTF-8
+	// ºóÖÐÎÄ»áÔÙ´ÎÂÒÂë£»gcc/clang »á×Ô¶¯Ìø¹ý BOM£¬¿ªÆô´ËÑ¡Ïî¶ÔËüÃÇÊÇ°²È«µÄ¡£
 	if (settings.writeBomOnConvert && text.charCodeAt(0) !== 0xFEFF) {
 		text = "\uFEFF" + text;
 	}
 
-	// å†™å›ž UTF-8ï¼ˆVault æ²¡æœ‰ write æ–¹æ³•ï¼Œæ­£ç¡® API æ˜¯ modifyï¼›adapter.write é»˜è®¤å³ UTF-8 æ–‡æœ¬ï¼‰
+	// Ð´»Ø UTF-8£¨Vault Ã»ÓÐ write ·½·¨£¬ÕýÈ· API ÊÇ modify£»adapter.write Ä¬ÈÏ¼´ UTF-8 ÎÄ±¾£©
 	await vault.modify(file, text);
 
 	const record = makeRecord(relPath, result.encoding, result.confidence, backupPath);
@@ -105,7 +105,7 @@ export async function convertFileToUtf8(
 	return { converted: true, skipped: false, record };
 }
 
-/** æ‰¹é‡è½¬æ¢ï¼ˆå¦‚æ‰«ææ•´ä¸ªæ–‡ä»¶å¤¹ï¼‰ï¼Œè¿”å›žç»Ÿè®¡ä¸Žå…¨éƒ¨è®°å½• */
+/** ÅúÁ¿×ª»»£¨ÈçÉ¨ÃèÕû¸öÎÄ¼þ¼Ð£©£¬·µ»ØÍ³¼ÆÓëÈ«²¿¼ÇÂ¼ */
 export async function convertFilesToUtf8(
 	vault: Vault,
 	files: TFile[],
@@ -115,12 +115,12 @@ export async function convertFilesToUtf8(
 	total: number;
 	converted: number;
 	skipped: number;
-	/** è·³è¿‡æ¸…å•ï¼ˆè·¯å¾„ + åŽŸå› ï¼Œå¦‚ä½Žç½®ä¿¡åº¦ï¼‰â€”â€”ä¾›æŽ§åˆ¶å°è¾“å‡ºä¸ŽæŽ’æŸ¥ */
+	/** Ìø¹ýÇåµ¥£¨Â·¾¶ + Ô­Òò£¬ÈçµÍÖÃÐÅ¶È£©¡ª¡ª¹©¿ØÖÆÌ¨Êä³öÓëÅÅ²é */
 	skippedList: { path: string; reason: string }[];
-	/** å¤±è´¥æ¸…å•ï¼ˆè·¯å¾„ + é”™è¯¯åŽŸå› ï¼‰ */
+	/** Ê§°ÜÇåµ¥£¨Â·¾¶ + ´íÎóÔ­Òò£© */
 	failed: { path: string; error: string }[];
 	records: ConversionRecord[];
-	/** ç–‘ä¼¼ä¸Šæ¸¸æŸåï¼ˆU+FFFD è¶…æ ‡ï¼‰çš„æ–‡ä»¶æ¸…å• */
+	/** ÒÉËÆÉÏÓÎËð»µ£¨U+FFFD ³¬±ê£©µÄÎÄ¼þÇåµ¥ */
 	damaged: { path: string; count: number; ratio: number }[];
 }> {
 	const failed: { path: string; error: string }[] = [];

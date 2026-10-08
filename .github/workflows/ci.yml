@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
-    # Obsidian ç¤¾åŒºç›®å½•æ ¡éªŒè¦æ±‚ tag ä¸ manifest version ç²¾ç¡®ä¸€è‡´ï¼Œä¸èƒ½å¸¦ v å‰ç¼€
+    # Obsidian ÉçÇøÄ¿Â¼Ğ£ÑéÒªÇó tag Óë manifest version ¾«È·Ò»ÖÂ£¬²»ÄÜ´ø v Ç°×º
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
   pull_request:
@@ -25,24 +25,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # tsc åœ¨ Windows ä¸‹æœ‰ç¼–ç  bugï¼Œæ•… CI è·‘åœ¨ ubuntu ä¸Šï¼ˆè§ docs/DEVELOPMENT.mdï¼‰
+      # tsc ÔÚ Windows ÏÂÓĞ±àÂë bug£¬¹Ê CI ÅÜÔÚ ubuntu ÉÏ£¨¼û docs/DEVELOPMENT.md£©
       - name: Type-check
         run: npm run lint
 
       - name: Unit tests
-        if: false   # ä¸´æ—¶ç¦ç”¨
+        if: false   # ÁÙÊ±½ûÓÃ
         run: npm test
 
-      # å¿…é¡»ç”¨ release æ¨¡å¼ï¼Œä¸èƒ½ç”¨ `npm run build`ï¼š
-      #   å¼€å‘æ¨¡å¼ â†’ ä»“åº“æ ¹ main.jsï¼ˆä¸å‹ç¼© + å†…è” sourcemapï¼Œä¼šæŠŠå…¨éƒ¨ TS æºç éšåŒ…å‘å‡ºï¼‰
-      #   å‘å¸ƒæ¨¡å¼ â†’ dist/main.jsï¼ˆå‹ç¼©ã€æ—  sourcemapï¼‰
-      # å‘å¸ƒåŒ…å¥‘çº¦è§ scripts/release.mjsï¼šdist/ æ°å¥½ä¸‰ä»¶å¥— main.js / manifest.json / styles.cssï¼›
-      # versions.json ä¸æ‰“åŒ…ï¼ˆåªç•™ä»“åº“æ ¹ä¾›ç¤¾åŒºç›®å½•è¯»å–ï¼Œè§ release.mjs:11ï¼‰ã€‚
+      # ±ØĞëÓÃ release Ä£Ê½£¬²»ÄÜÓÃ `npm run build`£º
+      #   ¿ª·¢Ä£Ê½ ¡ú ²Ö¿â¸ù main.js£¨²»Ñ¹Ëõ + ÄÚÁª sourcemap£¬»á°ÑÈ«²¿ TS Ô´ÂëËæ°ü·¢³ö£©
+      #   ·¢²¼Ä£Ê½ ¡ú dist/main.js£¨Ñ¹Ëõ¡¢ÎŞ sourcemap£©
+      # ·¢²¼°üÆõÔ¼¼û scripts/release.mjs£ºdist/ Ç¡ºÃÈı¼şÌ× main.js / manifest.json / styles.css£»
+      # versions.json ²»´ò°ü£¨Ö»Áô²Ö¿â¸ù¹©ÉçÇøÄ¿Â¼¶ÁÈ¡£¬¼û release.mjs:11£©¡£
       - name: Build & package (production)
         run: npm run release
 
       - name: Generate docs
-        if: false   # ä¸´æ—¶ç¦ç”¨
+        if: false   # ÁÙÊ±½ûÓÃ
         run: npm run docs
 
       - name: Upload build artifact
@@ -74,7 +74,7 @@ jobs:
         with:
           node-version: 20
 
-      # ç¤¾åŒºç›®å½•æ ¡éªŒè¦æ±‚ tag ä¸ manifest version ç²¾ç¡®ä¸€è‡´ï¼ˆä¸å¸¦ vï¼‰
+      # ÉçÇøÄ¿Â¼Ğ£ÑéÒªÇó tag Óë manifest version ¾«È·Ò»ÖÂ£¨²»´ø v£©
       - name: Verify tag matches manifest version
         run: |
           TAG="${GITHUB_REF_NAME}"
@@ -85,9 +85,10 @@ jobs:
           fi
           echo "tag '$TAG' == manifest version '$VER'"
 
-      # å‘å¸ƒèµ„äº§å¿…é¡»ä¸ scripts/release.mjs çš„å¥‘çº¦å®Œå…¨ä¸€è‡´ï¼šæ°å¥½ä¸‰ä»¶å¥—ã€‚
-      # å°‘ styles.css â†’ æ’ä»¶è£…ä¸Šåæ²¡æœ‰æ ·å¼ï¼›å¤š versions.json â†’ æ±¡æŸ“ç¤¾åŒºç›®å½•ã€‚
-      # è¿™é“é—¸é—¨è®©ã€Œèµ„äº§æ¸…å•æ¼‚ç§»ã€åœ¨å‘ç‰ˆæ—¶ç¡¬å¤±è´¥ï¼Œè€Œä¸æ˜¯é™é»˜å‘å‡ºå»ã€‚
+      # ·¢²¼×Ê²ú±ØĞëÓë scripts/release.mjs µÄÆõÔ¼ÍêÈ«Ò»ÖÂ£ºÇ¡ºÃÈı¼şÌ×¡£
+      # ÉÙ styles.css ¡ú ²å¼ş×°ÉÏºóÃ»ÓĞÑùÊ½£»¶à versions.json ¡ú ÎÛÈ¾ÉçÇøÄ¿Â¼¡£
+      # ÕâµÀÕ¢ÃÅÈÃ¡¸×Ê²úÇåµ¥Æ¯ÒÆ¡¹ÔÚ·¢°æÊ±Ó²Ê§°Ü£¬¶ø²»ÊÇ¾²Ä¬·¢³öÈ¥¡£
+      # ×¢Òâ£ºversions.json ÓÉÉçÇøÄ¿Â¼ÏµÍ³Ö±½Ó¶ÁÈ¡£¬¾ø²»ÄÜ³öÏÖÔÚ release assets Àï¡£
       - name: Verify release assets complete
         run: |
           set -e

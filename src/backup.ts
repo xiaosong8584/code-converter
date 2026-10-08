@@ -1,6 +1,6 @@
 /**
- * å¤‡ä»½æ¨¡å—ï¼šè½¬æ¢å‰æŠŠåŸæ–‡ä»¶å­—èŠ‚å­˜å…¥å¤‡ä»½ç›®å½•ï¼Œå‡ºé—®é¢˜å¯å›æ»šã€‚
- * ä½¿ç”¨ adapter.readBinary / writeBinaryï¼Œè·¯å¾„åŸºäºä»“åº“æ ¹ã€‚
+ * ±¸·İÄ£¿é£º×ª»»Ç°°ÑÔ­ÎÄ¼ş×Ö½Ú´æÈë±¸·İÄ¿Â¼£¬³öÎÊÌâ¿É»Ø¹ö¡£
+ * Ê¹ÓÃ adapter.readBinary / writeBinary£¬Â·¾¶»ùÓÚ²Ö¿â¸ù¡£
  */
 
 import { TFile, Vault, Notice } from "obsidian";
@@ -10,12 +10,12 @@ import { appendToFile } from "./log";
 
 const PLUGIN_NAME = "Code Converter";
 
-/** æŠŠä»“åº“å†…ç›¸å¯¹è·¯å¾„å®‰å…¨åŒ–ä¸ºæ–‡ä»¶å */
+/** °Ñ²Ö¿âÄÚÏà¶ÔÂ·¾¶°²È«»¯ÎªÎÄ¼şÃû */
 function safeName(relPath: string): string {
 	return relPath.replace(/[\\/]+/g, "__").replace(/^__/, "");
 }
 
-/** å¤‡ä»½åŸæ–‡ä»¶åˆ° backupDirï¼ˆåŒååŠ æ—¶é—´æˆ³é¿å…è¦†ç›–ï¼‰ */
+/** ±¸·İÔ­ÎÄ¼şµ½ backupDir£¨Í¬Ãû¼ÓÊ±¼ä´Á±ÜÃâ¸²¸Ç£© */
 export async function backupFile(
 	vault: Vault,
 	backupDir: string,
@@ -24,22 +24,22 @@ export async function backupFile(
 	const file = vault.getAbstractFileByPath(relPath);
 	if (!file) throw new Error(`file not found: ${relPath}`);
 
-	const bytes = await vault.readBinary(file as TFile);
+	const bytes = await vault.readBinary(file as unknown as TFile);
 	const time = new Date().toISOString().replace(/[:.]/g, "-");
 	const target = `${backupDir}/${safeName(relPath)}.${time}.bak`;
 
-	// ç¡®ä¿å¤‡ä»½ç›®å½•å­˜åœ¨ï¼ˆObsidian å†™å…¥ä¼šè‡ªåŠ¨å»ºçˆ¶ç›®å½•ï¼Œä½†ä¿é™©èµ·è§ï¼‰
+	// È·±£±¸·İÄ¿Â¼´æÔÚ£¨Obsidian Ğ´Èë»á×Ô¶¯½¨¸¸Ä¿Â¼£¬µ«±£ÏÕÆğ¼û£©
 	await ensureDir(vault, backupDir);
-	// writeBinary è¦ ArrayBufferï¼ˆd.ts: adapter.write åªæ”¶ stringï¼ŒUint8Array å±ç±»å‹å¥‘çº¦å¤–ï¼‰
+	// writeBinary Òª ArrayBuffer£¨d.ts: adapter.write Ö»ÊÕ string£¬Uint8Array ÊôÀàĞÍÆõÔ¼Íâ£©
 	await vault.adapter.writeBinary(target, new Uint8Array(bytes).buffer);
 	return target;
 }
 
 /**
- * é€’å½’ç¡®ä¿ç›®å½•å­˜åœ¨ã€‚
- * ç‚¹å¼€å¤´ç›®å½•ï¼ˆå¦‚ .code-converter/backupsï¼‰ä¸åœ¨ vault ç´¢å¼•é‡Œï¼ŒgetAbstractFileByPath
- * å¯¹å®ƒæ°¸è¿œè¿”å› null â†’ å¿…é¡»ç”¨ adapter.existsï¼ˆç£ç›˜å±‚ï¼‰åˆ¤æ–­ï¼›createFolder æ’ä¸Š
- * "Folder already exists."ï¼ˆç´¢å¼•æ»åï¼‰æ—¶é™é»˜å¿½ç•¥ã€‚
+ * µİ¹éÈ·±£Ä¿Â¼´æÔÚ¡£
+ * µã¿ªÍ·Ä¿Â¼£¨Èç .code-converter/backups£©²»ÔÚ vault Ë÷ÒıÀï£¬getAbstractFileByPath
+ * ¶ÔËüÓÀÔ¶·µ»Ø null ¡ú ±ØĞëÓÃ adapter.exists£¨´ÅÅÌ²ã£©ÅĞ¶Ï£»createFolder ×²ÉÏ
+ * "Folder already exists."£¨Ë÷ÒıÖÍºó£©Ê±¾²Ä¬ºöÂÔ¡£
  */
 async function ensureDir(vault: Vault, path: string): Promise<void> {
 	const parts = path.split("/").filter(Boolean);
@@ -50,26 +50,26 @@ async function ensureDir(vault: Vault, path: string): Promise<void> {
 			try {
 				await vault.createFolder(cur);
 			} catch {
-				/* ç›®å½•å·²å­˜åœ¨ï¼ˆç´¢å¼•æ»åï¼‰â†’ ç»§ç»­ç”¨ */
+				/* Ä¿Â¼ÒÑ´æÔÚ£¨Ë÷ÒıÖÍºó£©¡ú ¼ÌĞøÓÃ */
 			}
 		}
 	}
 }
 
-/** è®°å½•ä¸€æ¬¡è½¬æ¢ï¼ˆconsole + è¿½åŠ åˆ°æ—¥å¿—æ–‡ä»¶ï¼Œä¾¿äºå®¡è®¡ï¼‰ */
+/** ¼ÇÂ¼Ò»´Î×ª»»£¨console + ×·¼Óµ½ÈÕÖ¾ÎÄ¼ş£¬±ãÓÚÉó¼Æ£© */
 export function logConversion(
 	record: ConversionRecord,
 	vault?: Vault,
 	settings?: CodeConverterSettings
 ): void {
-	console.log("[code-converter]", JSON.stringify(record));
+	// Ö»Ğ´ÈÕÖ¾ÎÄ¼ş£¬²»Êä³öµ½¿ØÖÆÌ¨£¨±ÜÃâÎÛÈ¾ÈÕÖ¾£©
 	if (vault && settings && settings.logFile) {
-		// å¼‚æ­¥è¿½åŠ ï¼Œå¤±è´¥ä¸å½±å“ä¸»æµç¨‹
+		// Òì²½×·¼Ó£¬Ê§°Ü²»Ó°ÏìÖ÷Á÷³Ì
 		appendToFile(vault, settings.logFile, record).catch(() => {});
 	}
 }
 
-/** ç”Ÿæˆè½¬æ¢è®°å½• */
+/** Éú³É×ª»»¼ÇÂ¼ */
 export function makeRecord(
 	relPath: string,
 	from: string,
@@ -86,7 +86,7 @@ export function makeRecord(
 	};
 }
 
-/** ç”Ÿæˆå¤±è´¥è®°å½•ï¼ˆstatus=failedï¼Œé”™è¯¯åŸå› è¿› error å­—æ®µï¼Œä¾›æ—¥å¿—æ’æŸ¥ï¼‰ */
+/** Éú³ÉÊ§°Ü¼ÇÂ¼£¨status=failed£¬´íÎóÔ­Òò½ø error ×Ö¶Î£¬¹©ÈÕÖ¾ÅÅ²é£© */
 export function makeFailureRecord(
 	relPath: string,
 	error: string
@@ -103,12 +103,12 @@ export function makeFailureRecord(
 	};
 }
 
-/** æç¤ºå¤‡ä»½å·²ç”Ÿæˆ */
+/** ÌáÊ¾±¸·İÒÑÉú³É */
 export function notifyBackup(backupPath: string): void {
 	new Notice(`[${PLUGIN_NAME}] ${t("notice.backupCreated", { p: backupPath })}`);
 }
 
-/** è½¬æ¢å®Œæˆåæç¤º */
+/** ×ª»»Íê³ÉºóÌáÊ¾ */
 export function notifyConverted(file: string, from: string, confidence: number): void {
 	new Notice(`[${PLUGIN_NAME}] ${file}: ${t("notice.converted", { n: confidence })}`);
 }

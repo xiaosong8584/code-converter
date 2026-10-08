@@ -1,6 +1,6 @@
 {
  "name": "code-converter",
- "version": "1.7.0",
+ "version": "1.7.1",
  "description": "Obsidian plugin that detects non-UTF-8 file encodings and safely converts them to UTF-8 with backup.",
  "main": "main.js",
  "types": "main.d.ts",

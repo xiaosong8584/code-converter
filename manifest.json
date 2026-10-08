@@ -2,13 +2,10 @@
  "id": "code-converter",
  "name": "Code Converter",
  "version": "1.7.0",
- "minAppVersion": "1.0.0",
+ "minAppVersion": "1.4.0",
  "description": "Detects non-UTF-8 encodings in your vault and safely converts them to UTF-8 with automatic backup. Repairs double-encoded mojibake, exports conversion logs, and supports 10 UI languages.",
  "author": "xiaosong8584",
  "authorUrl": "https://github.com/xiaosong8584",
- "fundingUrl": [
-  "https://github.com/sponsors/xiaosong8584",
-  "https://afdian.net/a/xiaosong8584"
- ],
+ "fundingUrl": "https://afdian.net/a/xiaosong8584",
  "isDesktopOnly": false
 }

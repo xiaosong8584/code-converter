@@ -1,42 +1,42 @@
 /**
- * å¹¿å‘Šæ¨ªå¹…ï¼ˆè½»é‡æ”¯æŒä½œè€…æ¡ï¼Œç§»æ¤è‡ª desktoppet pet/AdBanner.tsï¼‰ã€‚
+ * ¹ã¸æºá·ù£¨ÇáÁ¿Ö§³Ö×÷ÕßÌõ£¬ÒÆÖ²×Ô desktoppet pet/AdBanner.ts£©¡£
  *
- * è®¾è®¡çº¦æŸï¼š
- * - é»˜è®¤éšè—ï¼Œä»…ç”± main.ts åœ¨å¯åŠ¨åæŒ‰é¢‘æ§ç­–ç•¥é©±åŠ¨æ˜¾éšï¼ˆé VIP æ¯æ—¥æœ€å¤šä¸€æ¬¡ï¼‰ï¼›
- * - VIP ç”¨æˆ·**æ°¸ä¹…ä¸æ˜¾ç¤º**ï¼ˆå·²ä»˜è´¹ï¼Œä¸ç”¨çœ‹å¹¿å‘Šï¼‰ï¼›
- * - é VIP ç”¨æˆ·**æ¯æ¬¡å¯åŠ¨æœ€å¤šå±•ç¤ºä¸€æ¬¡**ï¼ˆé˜²åˆ·å±ï¼Œä¹Ÿå‡å°‘åæ„Ÿï¼‰ï¼›
- * - æ–‡æ¡ˆæ¥è‡ª i18n keyï¼ŒURL ç”±ä½œè€…ç¡¬ç¼–ç é…ç½®ï¼›
- * - çº¯å®¢æˆ·ç«¯ï¼šå¹¿å‘Šé…ç½®ä¸è”ç½‘æ‹‰å–ï¼Œéšæ’ä»¶å‘ç‰ˆã€‚
- * - æ”¯æŒå¤šèµåŠ©æ¸ é“å¹¶åˆ—ï¼ˆä¸­å›½å¤§é™†ç”¨æˆ·ä¼˜å…ˆå›½å†…å¹³å°ï¼‰ã€‚
+ * Éè¼ÆÔ¼Êø£º
+ * - Ä¬ÈÏÒş²Ø£¬½öÓÉ main.ts ÔÚÆô¶¯ºó°´Æµ¿Ø²ßÂÔÇı¶¯ÏÔÒş£¨·Ç VIP Ã¿ÈÕ×î¶àÒ»´Î£©£»
+ * - VIP ÓÃ»§**ÓÀ¾Ã²»ÏÔÊ¾**£¨ÒÑ¸¶·Ñ£¬²»ÓÃ¿´¹ã¸æ£©£»
+ * - ·Ç VIP ÓÃ»§**Ã¿´ÎÆô¶¯×î¶àÕ¹Ê¾Ò»´Î**£¨·ÀË¢ÆÁ£¬Ò²¼õÉÙ·´¸Ğ£©£»
+ * - ÎÄ°¸À´×Ô i18n key£¬URL ÓÉ×÷ÕßÓ²±àÂëÅäÖÃ£»
+ * - ´¿¿Í»§¶Ë£º¹ã¸æÅäÖÃ²»ÁªÍøÀ­È¡£¬Ëæ²å¼ş·¢°æ¡£
+ * - Ö§³Ö¶àÔŞÖúÇşµÀ²¢ÁĞ£¨ÖĞ¹ú´óÂ½ÓÃ»§ÓÅÏÈ¹úÄÚÆ½Ì¨£©¡£
  *
- * å®ç°ï¼šä¸€ä¸ªæŒ‚åœ¨ `document.body` åº•éƒ¨çš„å›ºå®šæ¡ï¼Œåˆå§‹ `display:none`ï¼Œ
- * é€šè¿‡ CSS opacity + visibility è¿‡æ¸¡æ˜¾éšã€‚
+ * ÊµÏÖ£ºÒ»¸ö¹ÒÔÚ `document.body` µ×²¿µÄ¹Ì¶¨Ìõ£¬³õÊ¼ `display:none`£¬
+ * Í¨¹ı CSS opacity + visibility ¹ı¶ÉÏÔÒş¡£
  */
 
-/** å•ä¸ªèµåŠ©æ¸ é“ */
+/** µ¥¸öÔŞÖúÇşµÀ */
 export interface SponsorChannel {
-	/** i18n keyï¼ŒæŒ‡å‘æ¸ é“å */
+	/** i18n key£¬Ö¸ÏòÇşµÀÃû */
 	nameKey: string;
-	/** è·³è½¬ç›®æ ‡ URL */
+	/** Ìø×ªÄ¿±ê URL */
 	url: string;
 }
 
-/** å¹¿å‘Šé…ç½®ï¼ˆä½œè€…ä¾§æ§åˆ¶ï¼Œç”¨æˆ·ä¸å¯ç¼–è¾‘ï¼‰ */
+/** ¹ã¸æÅäÖÃ£¨×÷Õß²à¿ØÖÆ£¬ÓÃ»§²»¿É±à¼­£© */
 export interface AdConfig {
-	/** i18n keyï¼ŒæŒ‡å‘æ–‡æ¡ˆ */
+	/** i18n key£¬Ö¸ÏòÎÄ°¸ */
 	messageKey: string;
-	/** é»˜è®¤è·³è½¬ URLï¼ˆç‚¹å‡»æ¨ªå¹…ä¸»ä½“æŒ‰é’®æ—¶æ‰“å¼€ï¼‰ */
+	/** Ä¬ÈÏÌø×ª URL£¨µã»÷ºá·ùÖ÷Ìå°´Å¥Ê±´ò¿ª£© */
 	targetUrl: string;
-	/** å¤šèµåŠ©æ¸ é“ï¼ˆä¸­å›½å¤§é™†æ”¯æŒå›½å†…å¹³å°ï¼‰ */
+	/** ¶àÔŞÖúÇşµÀ£¨ÖĞ¹ú´óÂ½Ö§³Ö¹úÄÚÆ½Ì¨£© */
 	channels?: SponsorChannel[];
 }
 
-/** æ¯æ¬¡å¯åŠ¨æœ€å¤šå±•ç¤ºä¸€æ¬¡çš„èŠ‚æµçª—å£ï¼ˆmsï¼‰â€”â€” åŒä¸€å¤©å†…ç¬¬äºŒæ¬¡å¯åŠ¨ä¸å†å¼¹ */
+/** Ã¿´ÎÆô¶¯×î¶àÕ¹Ê¾Ò»´ÎµÄ½ÚÁ÷´°¿Ú£¨ms£©¡ª¡ª Í¬Ò»ÌìÄÚµÚ¶ş´ÎÆô¶¯²»ÔÙµ¯ */
 const DAILY_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 export interface AdState {
 	config: AdConfig;
-	/** æœ€è¿‘ä¸€æ¬¡å±•ç¤ºæ—¶é—´ï¼ˆmsï¼‰ï¼›æœªå±•ç¤ºè¿‡ = 0 */
+	/** ×î½üÒ»´ÎÕ¹Ê¾Ê±¼ä£¨ms£©£»Î´Õ¹Ê¾¹ı = 0 */
 	lastShownAt: number;
 }
 
@@ -55,17 +55,17 @@ export function defaultAdConfig(): AdConfig {
 }
 
 /**
- * åˆ¤æ–­æ˜¯å¦éœ€è¦å±•ç¤ºï¼šVIP æ—¶å¼ºåˆ¶ä¸å±•ç¤ºï¼›é VIP æ—¶æŒ‰æ¯æ—¥é¢‘æ¬¡é™åˆ¶ã€‚
- * çº¯é€»è¾‘å‡½æ•°ï¼ˆä¸ç¢° DOMï¼‰ï¼Œä¾¿äºå•å…ƒæµ‹è¯•ã€‚
+ * ÅĞ¶ÏÊÇ·ñĞèÒªÕ¹Ê¾£ºVIP Ê±Ç¿ÖÆ²»Õ¹Ê¾£»·Ç VIP Ê±°´Ã¿ÈÕÆµ´ÎÏŞÖÆ¡£
+ * ´¿Âß¼­º¯Êı£¨²»Åö DOM£©£¬±ãÓÚµ¥Ôª²âÊÔ¡£
  */
 export function shouldShowAd(vipActive: boolean, state: AdState | null): boolean {
 	if (vipActive) return false;
-	if (!state) return true; // é¦–æ¬¡å¯åŠ¨ï¼Œæ— è®°å½•
+	if (!state) return true; // Ê×´ÎÆô¶¯£¬ÎŞ¼ÇÂ¼
 	const elapsed = Date.now() - state.lastShownAt;
 	return elapsed >= DAILY_INTERVAL_MS;
 }
 
-/** æ ‡è®°æœ¬æ¬¡å¯åŠ¨å·²å±•ç¤ºï¼ˆè½ç›˜ç”¨çš„å°±æ˜¯è¿”å›çš„æ–° stateï¼‰ */
+/** ±ê¼Ç±¾´ÎÆô¶¯ÒÑÕ¹Ê¾£¨ÂäÅÌÓÃµÄ¾ÍÊÇ·µ»ØµÄĞÂ state£© */
 export function markAdShown(state: AdState | null): AdState {
 	return {
 		config: state?.config ?? defaultAdConfig(),
@@ -74,10 +74,10 @@ export function markAdShown(state: AdState | null): AdState {
 }
 
 /**
- * è½»é‡å¹¿å‘Šæ¨ªå¹… DOM å·¥å‚ã€‚
+ * ÇáÁ¿¹ã¸æºá·ù DOM ¹¤³§¡£
  *
- * æŒ‚è½½åˆ° document.bodyï¼Œå®šä½åº•éƒ¨å±…ä¸­ï¼Œé€æ˜è¿‡æ¸¡ã€‚
- * VIP æ¿€æ´» / onunload æ—¶ç”±å¤–éƒ¨è°ƒ `dispose()` ç§»é™¤ DOMã€‚
+ * ¹ÒÔØµ½ document.body£¬¶¨Î»µ×²¿¾ÓÖĞ£¬Í¸Ã÷¹ı¶É¡£
+ * VIP ¼¤»î / onunload Ê±ÓÉÍâ²¿µ÷ `dispose()` ÒÆ³ı DOM¡£
  */
 export class AdBanner {
 	private el: HTMLElement | null = null;
@@ -87,28 +87,27 @@ export class AdBanner {
 
 	constructor(
 		private readonly onOpenUrl: (url: string) => void,
-		/** æ–‡æ¡ˆç¿»è¯‘å‡½æ•°ï¼ˆæ³¨å…¥å¼ï¼Œä¾¿äºæµ‹è¯•ï¼›ç”Ÿäº§ä¼  i18n çš„ tï¼‰ */
+		/** ÎÄ°¸·­Òëº¯Êı£¨×¢ÈëÊ½£¬±ãÓÚ²âÊÔ£»Éú²ú´« i18n µÄ t£© */
 		private readonly translate: (key: string) => string,
-		/** å…³é—­å›è°ƒï¼ˆå¯é€‰ï¼‰ï¼šå¤–éƒ¨å¯æ®æ­¤æŠŠã€Œä»Šæ—¥å·²å±•ç¤ºã€è½ç›˜ */
+		/** ¹Ø±Õ»Øµ÷£¨¿ÉÑ¡£©£ºÍâ²¿¿É¾İ´Ë°Ñ¡¸½ñÈÕÒÑÕ¹Ê¾¡¹ÂäÅÌ */
 		private readonly onClose?: () => void
 	) {}
 
-	/** æŒ‚è½½åˆ° bodyï¼Œåˆå§‹éšè— */
+	/** ¹ÒÔØµ½ body£¬³õÊ¼Òş²Ø */
 	mount(): void {
 		if (this.el) return;
 		const el = document.createElement("div");
-		el.className = "cc-ad-banner";
+		el.className = "cc-ad-banner cc-ad-banner--hidden";
 		el.setAttribute("role", "complementary");
 		el.setAttribute("aria-label", "Support the author");
-		el.style.display = "none";
 
-		// æ–‡æ¡ˆ
+		// ÎÄ°¸
 		const msgEl = document.createElement("span");
 		msgEl.className = "cc-ad-banner__text";
 		el.appendChild(msgEl);
 		this.msgEl = msgEl;
 
-		// ä¸»è·³è½¬æŒ‰é’®
+		// Ö÷Ìø×ª°´Å¥
 		const openBtn = document.createElement("button");
 		openBtn.className = "cc-ad-banner__open";
 		openBtn.textContent = this.translate("ad.openBtn");
@@ -118,13 +117,13 @@ export class AdBanner {
 		});
 		el.appendChild(openBtn);
 
-		// èµåŠ©æ¸ é“æŒ‰é’®è¡Œ
+		// ÔŞÖúÇşµÀ°´Å¥ĞĞ
 		const channelsEl = document.createElement("div");
 		channelsEl.className = "cc-ad-banner__channels";
 		el.appendChild(channelsEl);
 		this.channelsEl = channelsEl;
 
-		// å…³é—­æŒ‰é’®
+		// ¹Ø±Õ°´Å¥
 		const closeBtn = document.createElement("button");
 		closeBtn.className = "cc-ad-banner__close";
 		closeBtn.setAttribute("aria-label", "Close");
@@ -149,7 +148,7 @@ export class AdBanner {
 		this.renderChannels(state?.config?.channels ?? DEFAULT_CONFIG.channels);
 	}
 
-	/** æ¸²æŸ“èµåŠ©æ¸ é“æŒ‰é’®è¡Œ */
+	/** äÖÈ¾ÔŞÖúÇşµÀ°´Å¥ĞĞ */
 	private renderChannels(channels: SponsorChannel[] | undefined): void {
 		if (!this.channelsEl) return;
 		this.channelsEl.textContent = "";
@@ -167,17 +166,16 @@ export class AdBanner {
 	}
 
 	/**
-	 * æ˜¾ç¤ºæ¨ªå¹…ï¼ˆåŒæ—¶æŠŠã€Œå·²å±•ç¤ºã€æ ‡è®°å›å†™ callerï¼‰ã€‚
+	 * ÏÔÊ¾ºá·ù£¨Í¬Ê±°Ñ¡¸ÒÑÕ¹Ê¾¡¹±ê¼Ç»ØĞ´ caller£©¡£
 	 *
-	 * @param onMessage è¦†ç›–æ–‡æ¡ˆçš„å­—ç¬¦ä¸²ï¼ˆä¸º null æ—¶è¯» state.config.messageKey + translateï¼‰
-	 * @returns æ›´æ–°åçš„ stateï¼ˆå« lastShownAtï¼‰ï¼Œè°ƒç”¨æ–¹é¡»è½ç›˜
+	 * @param onMessage ¸²¸ÇÎÄ°¸µÄ×Ö·û´®£¨Îª null Ê±¶Á state.config.messageKey + translate£©
+	 * @returns ¸üĞÂºóµÄ state£¨º¬ lastShownAt£©£¬µ÷ÓÃ·½ĞëÂäÅÌ
 	 */
 	show(onMessage?: string | null): AdState | null {
 		if (!this.el) return this.state;
 		if (onMessage != null && this.msgEl) {
 			this.msgEl.textContent = onMessage;
 		}
-		this.el.style.display = "";
 		this.el.classList.remove("cc-ad-banner--hidden");
 		return markAdShown(this.state);
 	}
@@ -185,14 +183,9 @@ export class AdBanner {
 	hide(): void {
 		if (!this.el) return;
 		this.el.classList.add("cc-ad-banner--hidden");
-		// ç­‰ CSS transition ç»“æŸå† display:noneï¼Œé¿å…é—ªçƒ
-		const el = this.el;
-		setTimeout(() => {
-			if (el.classList.contains("cc-ad-banner--hidden")) el.style.display = "none";
-		}, 320);
 	}
 
-	/** å®Œæ•´é‡Šæ”¾ï¼ˆonunload æ—¶è°ƒç”¨ï¼‰ */
+	/** ÍêÕûÊÍ·Å£¨onunload Ê±µ÷ÓÃ£© */
 	dispose(): void {
 		this.state = null;
 		this.msgEl = null;

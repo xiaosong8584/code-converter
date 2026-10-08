@@ -1,6 +1,6 @@
 /**
- * ç¡®è®¤å¼¹çª—ï¼šå½“æ¢æµ‹åˆ°é UTF-8 ç¼–ç ä½†ç½®ä¿¡åº¦ä¸è¶³æ—¶ï¼Œå¼¹å‡ºæ¥è®©ç”¨æˆ·å†³ç­–ã€‚
- * è¿™æ˜¯"å®‰å…¨é˜€"çš„å…³é”®ä¸€ç¯â€”â€”ç»ä¸é™é»˜å¼ºè½¬ã€‚
+ * È·ÈÏµ¯´°£ºµ±Ì½²âµ½·Ç UTF-8 ±àÂëµ«ÖÃĞÅ¶È²»×ãÊ±£¬µ¯³öÀ´ÈÃÓÃ»§¾ö²ß¡£
+ * ÕâÊÇ"°²È«·§"µÄ¹Ø¼üÒ»»·¡ª¡ª¾ø²»¾²Ä¬Ç¿×ª¡£
  */
 
 import { App, Modal, Notice, Setting, ToggleComponent } from "obsidian";
@@ -9,14 +9,14 @@ import { detectEncoding, decodeWithEncoding } from "./encoding";
 import { CodeConverterSettings } from "./types";
 import { t, isRtl } from "./i18n";
 
-/** åœ¨å¼¹çª—å†…æ„é€ çš„è½»é‡æ–‡ä»¶å¼•ç”¨ï¼ˆé¿å…å’Œ Vault TFile æ··æ·†ï¼‰ */
+/** ÔÚµ¯´°ÄÚ¹¹ÔìµÄÇáÁ¿ÎÄ¼şÒıÓÃ£¨±ÜÃâºÍ Vault TFile »ìÏı£© */
 export class EncodingConfirmModal extends Modal {
 	private file: TFile;
 	private vault: Vault;
 	private settings: CodeConverterSettings;
 	private onConfirm: (force: boolean) => Promise<void>;
 
-	// å¼¹çª—çŠ¶æ€
+	// µ¯´°×´Ì¬
 	private force: boolean;
 
 	constructor(
@@ -37,7 +37,7 @@ export class EncodingConfirmModal extends Modal {
 	async onOpen(): Promise<void> {
 		const { contentEl } = this;
 		contentEl.empty();
-		// RTL è¯­è¨€ç¿»è½¬å†…å®¹æ–¹å‘
+		// RTL ÓïÑÔ·­×ªÄÚÈİ·½Ïò
 		if (isRtl()) contentEl.setAttribute("dir", "rtl");
 		else contentEl.removeAttribute("dir");
 
@@ -47,23 +47,26 @@ export class EncodingConfirmModal extends Modal {
 		const h = contentEl.createEl("h2", { text: t("modal.title") });
 		h.classList.add("cc-title");
 
-		// æ–‡ä»¶ä¿¡æ¯
-		const fileRow = contentEl.createEl("div", { cls: "cc-file-row" });
-		fileRow.setText(this.file.path);
+		// ÎÄ¼şĞÅÏ¢
+		const fileRow = contentEl.createEl("div", { cls: "cc-file-row", text: this.file.path });
 
-		// æ¢æµ‹ç¼–ç ï¼ˆtextContent è€Œé innerHTMLï¼Œæœç»æ’å€¼å†…å®¹è¢«å½“ HTML è§£æï¼‰
-		const encRow = contentEl.createEl("div", { cls: "cc-detected" });
-		encRow.textContent = t("modal.detected", {
-			enc: det.encoding,
-			n: det.confidence
+		// Ì½²â±àÂë£¨textContent ¶ø·Ç innerHTML£¬¶Å¾ø²åÖµÄÚÈİ±»µ± HTML ½âÎö£©
+		const encRow = contentEl.createEl("div", {
+			cls: "cc-detected",
+			text: t("modal.detected", {
+				enc: det.encoding,
+				n: det.confidence
+			})
 		});
 
-		// é¢„è§ˆè§£ç åçš„å‰ 400 å­—ç¬¦ï¼ˆå¸®åŠ©ç”¨æˆ·åˆ¤æ–­ç¼–ç æ˜¯å¦æ­£ç¡®ï¼‰
+		// Ô¤ÀÀ½âÂëºóµÄÇ° 400 ×Ö·û£¨°ïÖúÓÃ»§ÅĞ¶Ï±àÂëÊÇ·ñÕıÈ·£©
 		const preview = decodeWithEncoding(bytes, det.encoding).slice(0, 400);
-		const preEl = contentEl.createEl("pre", { cls: "cc-preview" });
-		preEl.setText(preview || t("notice.emptyFile"));
+		const preEl = contentEl.createEl("pre", {
+			cls: "cc-preview",
+			text: preview || t("notice.emptyFile")
+		});
 
-		// å¼ºåˆ¶è½¬æ¢å¼€å…³
+		// Ç¿ÖÆ×ª»»¿ª¹Ø
 		new Setting(contentEl)
 			.setName(t("modal.force.name"))
 			.setDesc(t("modal.force.desc"))
@@ -73,15 +76,15 @@ export class EncodingConfirmModal extends Modal {
 				})
 			);
 
-		// æŒ‰é’®è¡Œ
+		// °´Å¥ĞĞ
 		const btnRow = contentEl.createDiv({ cls: "cc-btn-row" });
 		const okBtn = btnRow.createEl("button", { text: t("modal.confirm") });
-		okBtn.className = "cc-primary";
+		okBtn.addClass("cc-primary");
 		okBtn.onclick = async () => {
 			try {
 				await this.onConfirm(this.force);
 			} catch (e) {
-				// è½¬æ¢å¤±è´¥ä¹Ÿè¦å…³é—­å¼¹çª—å¹¶æç¤ºï¼Œé¿å…å¼¹çª—å¡æ­»
+				// ×ª»»Ê§°ÜÒ²Òª¹Ø±Õµ¯´°²¢ÌáÊ¾£¬±ÜÃâµ¯´°¿¨ËÀ
 				new Notice(`[Code Converter] ${(e as Error).message}`, 8000);
 			} finally {
 				this.close();
