@@ -1,7 +1,7 @@
 {
  "id": "code-converter",
  "name": "Code Converter",
- "version": "1.7.0",
+ "version": "1.7.1",
  "minAppVersion": "1.4.0",
  "description": "Detects non-UTF-8 encodings in your vault and safely converts them to UTF-8 with automatic backup. Repairs double-encoded mojibake, exports conversion logs, and supports 10 UI languages.",
  "author": "xiaosong8584",
