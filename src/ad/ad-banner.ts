@@ -96,46 +96,45 @@ export class AdBanner {
 	/** 挂载到 body，初始隐藏 */
 	mount(): void {
 		if (this.el) return;
-		const el = document.createElement("div");
-		el.className = "cc-ad-banner cc-ad-banner--hidden";
-		el.setAttribute("role", "complementary");
-		el.setAttribute("aria-label", "Support the author");
+		// Obsidian 在 Node 原型上注入了 createDiv/createEl（全局可用，document.body 也行）
+		const el = document.body.createDiv({
+			cls: ["cc-ad-banner", "cc-ad-banner--hidden"],
+			attr: {
+				role: "complementary",
+				"aria-label": "Support the author"
+			}
+		});
 
 		// 文案
-		const msgEl = document.createElement("span");
-		msgEl.className = "cc-ad-banner__text";
-		el.appendChild(msgEl);
+		const msgEl = el.createSpan({ cls: "cc-ad-banner__text" });
 		this.msgEl = msgEl;
 
 		// 主跳转按钮
-		const openBtn = document.createElement("button");
-		openBtn.className = "cc-ad-banner__open";
-		openBtn.textContent = this.translate("ad.openBtn");
+		const openBtn = el.createEl("button", {
+			cls: "cc-ad-banner__open",
+			text: this.translate("ad.openBtn")
+		});
 		openBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			this.onOpenUrl(this.state?.config?.targetUrl ?? DEFAULT_CONFIG.targetUrl);
 		});
-		el.appendChild(openBtn);
 
 		// 赞助渠道按钮行
-		const channelsEl = document.createElement("div");
-		channelsEl.className = "cc-ad-banner__channels";
-		el.appendChild(channelsEl);
+		const channelsEl = el.createDiv({ cls: "cc-ad-banner__channels" });
 		this.channelsEl = channelsEl;
 
 		// 关闭按钮
-		const closeBtn = document.createElement("button");
-		closeBtn.className = "cc-ad-banner__close";
-		closeBtn.setAttribute("aria-label", "Close");
-		closeBtn.textContent = "\u00d7";
+		const closeBtn = el.createEl("button", {
+			cls: "cc-ad-banner__close",
+			attr: { "aria-label": "Close" },
+			text: "\u00d7"
+		});
 		closeBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			this.hide();
 			this.onClose?.();
 		});
-		el.appendChild(closeBtn);
 
-		document.body.appendChild(el);
 		this.el = el;
 		this.setState(this.state);
 	}
@@ -154,14 +153,14 @@ export class AdBanner {
 		this.channelsEl.textContent = "";
 		if (!channels || channels.length === 0) return;
 		for (const ch of channels) {
-			const btn = document.createElement("button");
-			btn.className = "cc-ad-banner__channel";
-			btn.textContent = this.translate(ch.nameKey);
+			const btn = this.channelsEl.createEl("button", {
+				cls: "cc-ad-banner__channel",
+				text: this.translate(ch.nameKey)
+			});
 			btn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				this.onOpenUrl(ch.url);
 			});
-			this.channelsEl.appendChild(btn);
 		}
 	}
 

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+# package-lock.json 必须提交：社区审核的 build verification 依赖 lockfile 复现构建
+
+# Build output
+main.js
+main.js.map
+dist/
+*.tsbuildinfo
+
+# Obsidian
+.obsidian/
+trash/
+data.json
+
+# Build test artifacts
+test/_encoding.cjs
+test/_encoding.test.cjs
+test/_run.cjs
+test/_mojibake-gen.cjs
+test/_mojibake-run.cjs
+
+# VIP signing key（绝不进 git）
+.vip-secret
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+test/_log-run.cjs
+test/_vip-run.cjs
+test/_vip-run.mjs
+.workbuddy/

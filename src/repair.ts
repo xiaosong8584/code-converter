@@ -235,6 +235,14 @@ function plausibility(text: string, truth?: string): number {
 	return total === 0 ? 0 : good / total;
 }
 
+/** 是否含有非 ASCII 字符（用 charCodeAt 判断，避免控制字符正则告警） */
+function hasNonAscii(s: string): boolean {
+	for (let i = 0; i < s.length; i++) {
+		if (s.charCodeAt(i) > 0x7f) return true;
+	}
+	return false;
+}
+
 /**
  * 行内是否存在"≥2 个连续非 ASCII 字符"段。
  * 多字节编码（GB2312/Big5/EUC-KR 的尾字节 ≥0xA1）的乱码在 Latin-1 误读下，
@@ -487,7 +495,7 @@ function repairLine(
 	const hasBom = line.charCodeAt(0) === 0xFEFF;
 	const src = hasBom ? line.slice(1) : line;
 	// 修去 U+FFFD 后无非 ASCII → 无乱码可言
-	if (!/[^\u0000-\u007f]/.test(src.replace(/\uFFFD/g, ""))) return null;
+	if (!hasNonAscii(src.replace(/\uFFFD/g, ""))) return null;
 	const hasRun = hasNonAsciiRun(src);
 
 	// 通过全部门槛的候选（逐链记录，用于后续择优/歧义判定）
@@ -611,7 +619,7 @@ export function repairMojibake(text: string): RepairResult {
 
 	const outLines = lines.map((line) => {
 		// 只处理含非 ASCII 的行（乱码必然体现为非 ASCII 字符）
-		if (!/[^\u0000-\u007f]/.test(line)) return line;
+		if (!hasNonAscii(line)) return line;
 		scannedLines++;
 		let r = lineCache.get(line);
 		if (r === undefined) {
